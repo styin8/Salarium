@@ -1,0 +1,1 @@
+"""API routers for authentication, persons, salaries and statistics."""
