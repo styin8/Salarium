@@ -6,7 +6,10 @@ from .routes.auth import router as auth_router
 from .routes.persons import router as persons_router
 from .routes.salaries import router as salaries_router
 from .routes.stats import router as stats_router
-from ..config import CORS_ORIGINS, DB_PATH
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from config import CORS_ORIGINS, DB_PATH
 
 
 def create_app() -> FastAPI:
@@ -28,7 +31,7 @@ def create_app() -> FastAPI:
     register_tortoise(
         app,
         db_url=f"sqlite://{DB_PATH}",
-        modules={"models": ["backend.app.models.user", "backend.app.models.person", "backend.app.models.salary_record"]},
+        modules={"models": ["app.models.user", "app.models.person", "app.models.salary_record"]},
         generate_schemas=True,
         add_exception_handlers=True,
     )

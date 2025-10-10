@@ -1,4 +1,4 @@
-# Salarium — 简洁的家庭薪资管理
+# Salarium — 薪资管理
 
 ![CI](https://img.shields.io/badge/CI-GitHub_Actions-blue?logo=githubactions) ![License](https://img.shields.io/badge/License-Private-lightgrey) ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi) ![Vue 3](https://img.shields.io/badge/Vue_3-4FC08D?logo=vuedotjs) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite) ![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite)
 

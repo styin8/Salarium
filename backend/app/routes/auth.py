@@ -12,10 +12,20 @@ router = APIRouter()
 @router.post("/register", response_model=UserOut)
 async def register(payload: RegisterRequest):
     try:
-        user = await User.create(username=payload.username, password_hash=hash_password(payload.password))
+        # Debug: Print password info before hashing
+        print(f"DEBUG: Original password: '{payload.password}', length: {len(payload.password)}")
+        print(f"DEBUG: Password bytes length: {len(payload.password.encode('utf-8'))}")
+        
+        hashed_password = hash_password(payload.password)
+        print(f"DEBUG: Password hashed successfully")
+        
+        user = await User.create(username=payload.username, password_hash=hashed_password)
         return UserOut(id=user.id, username=user.username)
     except IntegrityError:
         raise HTTPException(status_code=400, detail="用户名已存在")
+    except Exception as e:
+        print(f"DEBUG: Error during registration: {type(e).__name__}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"注册失败: {str(e)}")
 
 
 @router.post("/login", response_model=TokenResponse)

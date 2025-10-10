@@ -7,11 +7,11 @@ const Salaries = () => import('../views/Salaries.vue')
 const Stats = () => import('../views/Stats.vue')
 
 const routes = [
-  { path: '/', redirect: '/persons' },
+  { path: '/', redirect: '/stats' },
   { path: '/login', component: Login },
+  { path: '/stats', component: Stats },
   { path: '/persons', component: Persons },
   { path: '/salaries/:personId?', component: Salaries },
-  { path: '/stats', component: Stats },
 ]
 
 const router = createRouter({

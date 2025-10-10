@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 
 from ..models import SalaryRecord, Person
 from ..schemas.stats import MonthlyStats, YearlyStats, FamilySummary
@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.get("/monthly", response_model=List[MonthlyStats])
 async def monthly_stats(
-    user= get_current_user,
+    user= Depends(get_current_user),
     person_id: Optional[int] = Query(default=None),
     year: Optional[int] = Query(default=None),
     month: Optional[int] = Query(default=None),
@@ -61,7 +61,7 @@ async def monthly_stats(
 
 
 @router.get("/yearly", response_model=List[YearlyStats])
-async def yearly_stats(user= get_current_user, person_id: Optional[int] = Query(default=None), year: int = Query(...)):
+async def yearly_stats(user= Depends(get_current_user), person_id: Optional[int] = Query(default=None), year: int = Query(...)):
     persons = await Person.filter(user_id=user.id).all()
     person_ids = {p.id for p in persons}
     if person_id and person_id not in person_ids:
@@ -116,7 +116,7 @@ async def yearly_stats(user= get_current_user, person_id: Optional[int] = Query(
 
 
 @router.get("/family", response_model=FamilySummary)
-async def family_summary(user= get_current_user, year: int = Query(...)):
+async def family_summary(user= Depends(get_current_user), year: int = Query(...)):
     persons = await Person.filter(user_id=user.id).all()
     person_ids = [p.id for p in persons]
     recs = await SalaryRecord.filter(person_id__in=person_ids, year=year).all()
