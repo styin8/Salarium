@@ -9,6 +9,7 @@ class SalaryCreate(BaseModel):
     performance_salary: float = 0.0
     high_temp_allowance: float = 0.0
     low_temp_allowance: float = 0.0
+    computer_allowance: float = 0.0
     meal_allowance: float = 0.0
     mid_autumn_benefit: float = 0.0
     dragon_boat_benefit: float = 0.0
@@ -31,6 +32,7 @@ class SalaryUpdate(BaseModel):
     performance_salary: Optional[float] = None
     high_temp_allowance: Optional[float] = None
     low_temp_allowance: Optional[float] = None
+    computer_allowance: Optional[float] = None
     meal_allowance: Optional[float] = None
     mid_autumn_benefit: Optional[float] = None
     dragon_boat_benefit: Optional[float] = None
@@ -56,6 +58,7 @@ class SalaryOut(BaseModel):
     performance_salary: float
     high_temp_allowance: float
     low_temp_allowance: float
+    computer_allowance: float
     meal_allowance: float
     mid_autumn_benefit: float
     dragon_boat_benefit: float
@@ -73,4 +76,6 @@ class SalaryOut(BaseModel):
     total_deductions: float
     gross_income: float
     net_income: float
+    actual_take_home: float
+    non_cash_benefits: float
     note: Optional[str] = None

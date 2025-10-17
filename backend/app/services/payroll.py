@@ -24,6 +24,7 @@ def compute_payroll(
     performance_salary: float,
     high_temp_allowance: float,
     low_temp_allowance: float,
+    computer_allowance: float,
     meal_allowance: float,
     mid_autumn_benefit: float,
     dragon_boat_benefit: float,
@@ -39,11 +40,21 @@ def compute_payroll(
     tax: float,
     auto_tax: bool,
 ):
+    # Non-cash benefits (not included in actual take-home)
+    non_cash_benefits = (
+        meal_allowance
+        + mid_autumn_benefit
+        + dragon_boat_benefit
+        + spring_festival_benefit
+    )
+    
+    # Total income includes everything
     total_income = (
         base_salary
         + performance_salary
         + high_temp_allowance
         + low_temp_allowance
+        + computer_allowance
         + meal_allowance
         + mid_autumn_benefit
         + dragon_boat_benefit
@@ -65,10 +76,25 @@ def compute_payroll(
     tax_final = compute_tax_auto(gross_income, total_deductions) if auto_tax else tax
     net_income = gross_income - total_deductions - tax_final
     
+    # Actual take-home = cash income - deductions - tax
+    # Excludes non-cash benefits (meal, festival benefits)
+    actual_take_home = (
+        base_salary
+        + performance_salary
+        + high_temp_allowance
+        + low_temp_allowance
+        + computer_allowance
+        + other_income
+        - total_deductions
+        - tax_final
+    )
+    
     return {
         "total_income": total_income,
         "total_deductions": total_deductions,
         "gross_income": gross_income,
         "tax": tax_final,
         "net_income": net_income,
+        "actual_take_home": actual_take_home,
+        "non_cash_benefits": non_cash_benefits,
     }
