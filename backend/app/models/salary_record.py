@@ -13,6 +13,7 @@ class SalaryRecord(Model):
     performance_salary = fields.FloatField(default=0.0)
     high_temp_allowance = fields.FloatField(default=0.0)
     low_temp_allowance = fields.FloatField(default=0.0)
+    computer_allowance = fields.FloatField(default=0.0)
     meal_allowance = fields.FloatField(default=0.0)
     mid_autumn_benefit = fields.FloatField(default=0.0)
     dragon_boat_benefit = fields.FloatField(default=0.0)

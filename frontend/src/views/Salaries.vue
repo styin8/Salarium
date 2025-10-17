@@ -42,6 +42,7 @@ const form = ref({
   performance_salary: 0,
   high_temp_allowance: 0,
   low_temp_allowance: 0,
+  computer_allowance: 0,
   meal_allowance: 0,
   mid_autumn_benefit: 0,
   dragon_boat_benefit: 0,
@@ -125,6 +126,7 @@ function openCreate() {
     performance_salary: 0,
     high_temp_allowance: 0,
     low_temp_allowance: 0,
+    computer_allowance: 0,
     meal_allowance: 0,
     mid_autumn_benefit: 0,
     dragon_boat_benefit: 0,
@@ -378,6 +380,7 @@ onMounted(load)
                 <th class="col-currency">其他扣除</th>
                 <th class="col-currency">个税</th>
                 <th class="col-currency">实发工资</th>
+                <th class="col-currency highlight">实际到手</th>
                 <th class="col-actions">操作</th>
               </tr>
             </thead>
@@ -394,6 +397,7 @@ onMounted(load)
                 <td class="col-currency">{{ formatCurrency(
                   salary.high_temp_allowance + 
                   salary.low_temp_allowance + 
+                  salary.computer_allowance +
                   salary.meal_allowance + 
                   salary.mid_autumn_benefit + 
                   salary.dragon_boat_benefit + 
@@ -412,6 +416,7 @@ onMounted(load)
                 <td class="col-currency text-danger">-{{ formatCurrency(salary.other_deductions) }}</td>
                 <td class="col-currency text-danger">-{{ formatCurrency(salary.tax) }}</td>
                 <td class="col-currency net-income">{{ formatCurrency(salary.net_income) }}</td>
+                <td class="col-currency actual-take-home highlight">{{ formatCurrency(salary.actual_take_home) }}</td>
                 <td class="col-actions">
                   <div class="action-buttons">
                     <button 
@@ -488,25 +493,29 @@ onMounted(load)
           </div>
           <div class="form-row">
             <div class="form-group">
+              <label class="form-label">电脑补贴</label>
+              <input v-model.number="form.computer_allowance" type="number" class="form-control" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
               <label class="form-label">餐补</label>
               <input v-model.number="form.meal_allowance" type="number" class="form-control" step="0.01" min="0" />
             </div>
+          </div>
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label">中秋福利</label>
               <input v-model.number="form.mid_autumn_benefit" type="number" class="form-control" step="0.01" min="0" />
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-group">
               <label class="form-label">端午福利</label>
               <input v-model.number="form.dragon_boat_benefit" type="number" class="form-control" step="0.01" min="0" />
             </div>
+          </div>
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label">春节福利</label>
               <input v-model.number="form.spring_festival_benefit" type="number" class="form-control" step="0.01" min="0" />
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-group">
               <label class="form-label">其他收入</label>
               <input v-model.number="form.other_income" type="number" class="form-control" step="0.01" min="0" />
@@ -902,6 +911,17 @@ onMounted(load)
 .net-income {
   font-weight: 600;
   color: #10b981;
+}
+
+.actual-take-home {
+  font-weight: 700;
+  color: #059669 !important;
+  font-size: 1.05em;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.15) 100%);
+}
+
+.highlight {
+  background: rgba(251, 191, 36, 0.08);
 }
 
 .action-buttons {

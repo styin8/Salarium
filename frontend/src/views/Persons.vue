@@ -9,7 +9,13 @@ import { Plus, Users, DollarSign, Trash2, Edit, User, TrendingUp, Calendar, Awar
 const user = useUserStore()
 const list = ref([])
 const dialogVisible = ref(false)
-const form = ref({ name: '', note: '' })
+const form = ref({ 
+  name: '', 
+  note: '',
+  pension_history: 0,
+  medical_history: 0,
+  housing_fund_history: 0
+})
 const loading = ref(false)
 
 const api = axios.create({
@@ -45,7 +51,13 @@ async function load() {
 
 // Open create person dialog
 function openCreate() {
-  form.value = { name: '', note: '' }
+  form.value = { 
+    name: '', 
+    note: '',
+    pension_history: 0,
+    medical_history: 0,
+    housing_fund_history: 0
+  }
   dialogVisible.value = true
 }
 
@@ -237,7 +249,7 @@ onMounted(load)
       width="500px"
       class="person-dialog"
     >
-      <el-form :model="form" label-width="80px">
+      <el-form :model="form" label-width="140px">
         <el-form-item label="姓名" required>
           <el-input 
             v-model="form.name" 
@@ -255,6 +267,40 @@ onMounted(load)
             maxlength="200"
             show-word-limit
           />
+        </el-form-item>
+        <el-divider content-position="left">历史累计值（加入系统前）</el-divider>
+        <el-form-item label="养老保险历史累计">
+          <el-input-number 
+            v-model="form.pension_history" 
+            :min="0"
+            :precision="2"
+            :step="100"
+            placeholder="输入加入系统前的累计金额"
+            style="width: 100%"
+          />
+          <span style="color: #909399; font-size: 12px; margin-left: 8px;">元</span>
+        </el-form-item>
+        <el-form-item label="医疗保险历史累计">
+          <el-input-number 
+            v-model="form.medical_history" 
+            :min="0"
+            :precision="2"
+            :step="100"
+            placeholder="输入加入系统前的累计金额"
+            style="width: 100%"
+          />
+          <span style="color: #909399; font-size: 12px; margin-left: 8px;">元</span>
+        </el-form-item>
+        <el-form-item label="住房公积金历史累计">
+          <el-input-number 
+            v-model="form.housing_fund_history" 
+            :min="0"
+            :precision="2"
+            :step="100"
+            placeholder="输入加入系统前的累计金额"
+            style="width: 100%"
+          />
+          <span style="color: #909399; font-size: 12px; margin-left: 8px;">元</span>
         </el-form-item>
       </el-form>
       
