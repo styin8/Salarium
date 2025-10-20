@@ -4,14 +4,103 @@ from decimal import Decimal
 
 from ..models import SalaryRecord, Person
 from ..schemas.stats import (
-    MonthlyStats, YearlyStats, FamilySummary, 
-    PersonCumulativeInsurance, BenefitStats, IncomeComposition
+    MonthlyStats, YearlyStats, FamilySummary,
+    PersonCumulativeInsurance, BenefitStats, IncomeComposition,
+    MonthlyNetIncome, GrossVsNetMonthly,
+    DeductionsBreakdown, DeductionsMonthly, DeductionsBreakdownItem,
+    ContributionsCumulative, ContributionsCumulativePoint,
+    MonthlyTableRow, AnnualTableRow,
 )
 from ..utils.auth import get_current_user
 from ..services.payroll import compute_payroll
 
 
 router = APIRouter()
+
+
+# Helpers for stats calculations aligned with the unified calculation spec
+_D = lambda v: v if isinstance(v, Decimal) else Decimal(str(v or 0))
+
+def _allowances_sum(r: SalaryRecord) -> Decimal:
+    return _D(r.high_temp_allowance) + _D(r.low_temp_allowance) + _D(r.computer_allowance)
+
+
+def _benefits_sum(r: SalaryRecord) -> Decimal:
+    return _D(r.meal_allowance) + _D(r.mid_autumn_benefit) + _D(r.dragon_boat_benefit) + _D(r.spring_festival_benefit)
+
+
+def _deductions_sum(r: SalaryRecord) -> Decimal:
+    return (
+        _D(r.pension_insurance)
+        + _D(r.medical_insurance)
+        + _D(r.unemployment_insurance)
+        + _D(r.critical_illness_insurance)
+        + _D(r.enterprise_annuity)
+        + _D(r.housing_fund)
+        + _D(r.other_deductions)
+    )
+
+
+def _unified_net_income(r: SalaryRecord) -> Decimal:
+    """Net income according to unified spec:
+    net = base + performance + high + low + computer - (all deductions)
+    Note: excludes meal/benefits and excludes other_income and tax.
+    """
+    return _D(r.base_salary) + _D(r.performance_salary) + _allowances_sum(r) - _deductions_sum(r)
+
+
+def _gross_income_full(r: SalaryRecord) -> Decimal:
+    """Gross income for charts: sum of all income including non-cash and other income."""
+    return _D(r.base_salary) + _D(r.performance_salary) + _allowances_sum(r) + _benefits_sum(r) + _D(r.other_income)
+
+
+def _ym_num(y: int, m: int) -> int:
+    return y * 100 + m
+
+
+def _parse_range(range_str: str) -> (int, int):
+    """Parse a flexible range string into start and end numeric YYYYMM bounds (inclusive).
+    Accepted formats:
+    - '2024' -> 202401..202412
+    - '2024-03' -> 202403..202403
+    - '2024-01..2024-06', '2024-01:2024-06', '2024-01,2024-06', '2024-01_2024-06'
+    """
+    s = (range_str or "").strip()
+    if not s:
+        return (0, 999999)
+
+    def parse_one(part: str, is_start: bool) -> (int, int):
+        p = part.strip()
+        if not p:
+            return (0, 1) if is_start else (9999, 12)
+        if len(p) == 4 and p.isdigit():
+            y = int(p)
+            return (y, 1) if is_start else (y, 12)
+        # Expect YYYY-MM
+        if "-" in p:
+            try:
+                y_str, m_str = p.split("-", 1)
+                y = int(y_str)
+                m = int(m_str)
+                return (y, m)
+            except Exception:
+                pass
+        # Fallback
+        return (0, 1) if is_start else (9999, 12)
+
+    sep = None
+    for candidate in ("..", ":", ",", "_"):
+        if candidate in s:
+            sep = candidate
+            break
+    if not sep:
+        y, m = parse_one(s, True)
+        return (_ym_num(y, m), _ym_num(y, m))
+
+    left, right = s.split(sep, 1)
+    y1, m1 = parse_one(left, True)
+    y2, m2 = parse_one(right, False)
+    return (_ym_num(y1, m1), _ym_num(y2, m2))
 
 
 @router.get("/monthly", response_model=List[MonthlyStats])
@@ -275,8 +364,9 @@ async def income_composition(
     person_id: Optional[int] = Query(default=None),
     year: Optional[int] = Query(default=None),
     month: Optional[int] = Query(default=None),
+    range: Optional[str] = Query(default=None, description="时间范围，如 2024-01..2024-12 或 2024-01,2024-12"),
 ):
-    """Get income composition with percentages"""
+    """Get income composition with percentages. Supports filtering by year/month or a custom range."""
     q = SalaryRecord.filter(person__user_id=user.id)
     if person_id:
         q = q.filter(person_id=person_id)
@@ -286,6 +376,15 @@ async def income_composition(
         q = q.filter(month=month)
     
     recs = await q.all()
+
+    # Apply range filter in Python if provided
+    def _ym(v: SalaryRecord) -> int:
+        return v.year * 100 + v.month
+    
+    if range:
+        start_num, end_num = _parse_range(range)
+        recs = [r for r in recs if start_num <= _ym(r) <= end_num]
+
     result: List[IncomeComposition] = []
     
     for r in recs:
@@ -328,3 +427,310 @@ async def income_composition(
         ))
     
     return result
+
+
+@router.get("/net-income/monthly", response_model=List[MonthlyNetIncome])
+async def net_income_monthly(
+    user=Depends(get_current_user),
+    year: Optional[int] = Query(default=None),
+    person_id: Optional[int] = Query(default=None),
+    range: Optional[str] = Query(default=None, description="时间范围，如 2024-01..2024-12"),
+):
+    """Monthly net income series (unified calculation)."""
+    q = SalaryRecord.filter(person__user_id=user.id)
+    if person_id:
+        q = q.filter(person_id=person_id)
+    if year:
+        q = q.filter(year=year)
+    recs = await q.all()
+
+    if range:
+        start_num, end_num = _parse_range(range)
+        recs = [r for r in recs if start_num <= _ym_num(r.year, r.month) <= end_num]
+
+    sums = {}
+    for r in recs:
+        key = (r.year, r.month)
+        sums[key] = sums.get(key, Decimal("0")) + _unified_net_income(r)
+
+    result: List[MonthlyNetIncome] = []
+    for (y, m) in sorted(sums.keys()):
+        result.append(MonthlyNetIncome(year=y, month=m, net_income=float(sums[(y, m)])))
+    return result
+
+
+@router.get("/gross-vs-net/monthly", response_model=List[GrossVsNetMonthly])
+async def gross_vs_net_monthly(
+    user=Depends(get_current_user),
+    year: Optional[int] = Query(default=None),
+    person_id: Optional[int] = Query(default=None),
+    range: Optional[str] = Query(default=None, description="时间范围，如 2024-01..2024-12"),
+):
+    """Monthly gross vs net income (unified net)."""
+    q = SalaryRecord.filter(person__user_id=user.id)
+    if person_id:
+        q = q.filter(person_id=person_id)
+    if year:
+        q = q.filter(year=year)
+    recs = await q.all()
+
+    if range:
+        start_num, end_num = _parse_range(range)
+        recs = [r for r in recs if start_num <= _ym_num(r.year, r.month) <= end_num]
+
+    sums = {}
+    for r in recs:
+        key = (r.year, r.month)
+        gross = _gross_income_full(r)
+        net = _unified_net_income(r)
+        prev_g, prev_n = sums.get(key, (Decimal("0"), Decimal("0")))
+        sums[key] = (prev_g + gross, prev_n + net)
+
+    result: List[GrossVsNetMonthly] = []
+    for (y, m) in sorted(sums.keys()):
+        g, n = sums[(y, m)]
+        result.append(GrossVsNetMonthly(year=y, month=m, gross_income=float(g), net_income=float(n)))
+    return result
+
+
+@router.get("/deductions/breakdown", response_model=DeductionsBreakdown)
+async def deductions_breakdown(
+    user=Depends(get_current_user),
+    person_id: Optional[int] = Query(default=None),
+    range: Optional[str] = Query(default=None, description="时间范围，如 2024-01..2024-12"),
+):
+    """Breakdown of deduction categories with monthly series and percentage share."""
+    q = SalaryRecord.filter(person__user_id=user.id)
+    if person_id:
+        q = q.filter(person_id=person_id)
+    recs = await q.all()
+
+    if range:
+        start_num, end_num = _parse_range(range)
+        recs = [r for r in recs if start_num <= _ym_num(r.year, r.month) <= end_num]
+
+    # Summary totals by category
+    categories = [
+        ("养老保险", "pension_insurance"),
+        ("医疗保险", "medical_insurance"),
+        ("失业保险", "unemployment_insurance"),
+        ("大病互助保险", "critical_illness_insurance"),
+        ("企业年金", "enterprise_annuity"),
+        ("住房公积金", "housing_fund"),
+        ("其他扣除", "other_deductions"),
+    ]
+
+    totals = {key: Decimal("0") for _, key in categories}
+    for r in recs:
+        for _, key in categories:
+            totals[key] += _D(getattr(r, key))
+
+    grand_total = sum(totals.values()) if totals else Decimal("0")
+    summary: List[DeductionsBreakdownItem] = []
+    for name, key in categories:
+        amount = totals[key]
+        percent = float((amount / grand_total * 100) if grand_total > 0 else 0)
+        summary.append(DeductionsBreakdownItem(category=name, amount=float(amount), percent=percent))
+
+    # Monthly series
+    monthly_map = {}
+    for r in recs:
+        k = (r.year, r.month)
+        if k not in monthly_map:
+            monthly_map[k] = {key: Decimal("0") for _, key in categories}
+        for _, key in categories:
+            monthly_map[k][key] += _D(getattr(r, key))
+
+    monthly: List[DeductionsMonthly] = []
+    for (y, m) in sorted(monthly_map.keys()):
+        data = monthly_map[(y, m)]
+        total = sum(data.values())
+        monthly.append(DeductionsMonthly(
+            year=y,
+            month=m,
+            pension_insurance=float(data["pension_insurance"]),
+            medical_insurance=float(data["medical_insurance"]),
+            unemployment_insurance=float(data["unemployment_insurance"]),
+            critical_illness_insurance=float(data["critical_illness_insurance"]),
+            enterprise_annuity=float(data["enterprise_annuity"]),
+            housing_fund=float(data["housing_fund"]),
+            other_deductions=float(data["other_deductions"]),
+            total=float(total),
+        ))
+
+    return DeductionsBreakdown(summary=summary, monthly=monthly)
+
+
+@router.get("/contributions/cumulative", response_model=ContributionsCumulative)
+async def contributions_cumulative(
+    user=Depends(get_current_user),
+    person_id: int = Query(..., description="人员ID"),
+    range: Optional[str] = Query(default=None, description="时间范围，如 2024-01..2024-12"),
+):
+    """Cumulative lines for pension/medical/housing fund, optionally seeded with history."""
+    person = await Person.get_or_none(id=person_id, user_id=user.id)
+    if not person:
+        raise HTTPException(status_code=404, detail="人员不存在")
+
+    all_recs = await SalaryRecord.filter(person_id=person_id).all()
+    all_recs.sort(key=lambda r: _ym_num(r.year, r.month))
+
+    if range:
+        start_num, end_num = _parse_range(range)
+    else:
+        start_num, end_num = (0, 999999)
+
+    # Base offsets include history plus any system amounts before the range start
+    base_pension = _D(person.pension_history)
+    base_medical = _D(person.medical_history)
+    base_housing = _D(person.housing_fund_history)
+
+    for r in all_recs:
+        ym = _ym_num(r.year, r.month)
+        if ym < start_num:
+            base_pension += _D(r.pension_insurance)
+            base_medical += _D(r.medical_insurance)
+            base_housing += _D(r.housing_fund)
+
+    # Iterate points inside range
+    points: List[ContributionsCumulativePoint] = []
+    cur_p = base_pension
+    cur_m = base_medical
+    cur_h = base_housing
+
+    for r in all_recs:
+        ym = _ym_num(r.year, r.month)
+        if ym < start_num or ym > end_num:
+            continue
+        cur_p += _D(r.pension_insurance)
+        cur_m += _D(r.medical_insurance)
+        cur_h += _D(r.housing_fund)
+        points.append(ContributionsCumulativePoint(
+            year=r.year,
+            month=r.month,
+            pension_cumulative=float(cur_p),
+            medical_cumulative=float(cur_m),
+            housing_fund_cumulative=float(cur_h),
+        ))
+
+    # Totals over entire dataset (history + system)
+    pension_system_total = float(sum(_D(r.pension_insurance) for r in all_recs))
+    medical_system_total = float(sum(_D(r.medical_insurance) for r in all_recs))
+    housing_system_total = float(sum(_D(r.housing_fund) for r in all_recs))
+
+    return ContributionsCumulative(
+        person_id=person.id,
+        person_name=person.name,
+        pension_history=person.pension_history,
+        medical_history=person.medical_history,
+        housing_fund_history=person.housing_fund_history,
+        points=points,
+        pension_system_total=pension_system_total,
+        medical_system_total=medical_system_total,
+        housing_fund_system_total=housing_system_total,
+        pension_total=float(_D(person.pension_history) + _D(pension_system_total)),
+        medical_total=float(_D(person.medical_history) + _D(medical_system_total)),
+        housing_fund_total=float(_D(person.housing_fund_history) + _D(housing_system_total)),
+    )
+
+
+@router.get("/tables/monthly", response_model=List[MonthlyTableRow])
+async def monthly_table(
+    user=Depends(get_current_user),
+    person_id: Optional[int] = Query(default=None),
+    year: Optional[int] = Query(default=None),
+    range: Optional[str] = Query(default=None),
+):
+    """Monthly detail table: income items, deduction subtotal, net income (unified), benefits total, note."""
+    q = SalaryRecord.filter(person__user_id=user.id)
+    if person_id:
+        q = q.filter(person_id=person_id)
+    if year:
+        q = q.filter(year=year)
+    recs = await q.all()
+
+    if range:
+        start_num, end_num = _parse_range(range)
+        recs = [r for r in recs if start_num <= _ym_num(r.year, r.month) <= end_num]
+
+    # Load person names
+    persons = {p.id: p.name for p in await Person.filter(user_id=user.id).all()}
+
+    rows: List[MonthlyTableRow] = []
+    for r in sorted(recs, key=lambda x: (x.year, x.month, x.person_id)):
+        benefits = _benefits_sum(r)
+        deductions = _deductions_sum(r)
+        net = _unified_net_income(r)
+        rows.append(MonthlyTableRow(
+            person_id=r.person_id,
+            person_name=persons.get(r.person_id, str(r.person_id)),
+            year=r.year,
+            month=r.month,
+            base_salary=float(_D(r.base_salary)),
+            performance_salary=float(_D(r.performance_salary)),
+            high_temp_allowance=float(_D(r.high_temp_allowance)),
+            low_temp_allowance=float(_D(r.low_temp_allowance)),
+            computer_allowance=float(_D(r.computer_allowance)),
+            other_income=float(_D(r.other_income)),
+            benefits_total=float(benefits),
+            deductions_total=float(deductions),
+            tax=float(_D(r.tax)),
+            net_income=float(net),
+            note=r.note,
+        ))
+
+    return rows
+
+
+@router.get("/tables/annual", response_model=List[AnnualTableRow])
+async def annual_table(
+    user=Depends(get_current_user),
+    year: int = Query(...),
+):
+    """Annual summary table per person with YoY growth based on unified net income."""
+    persons = await Person.filter(user_id=user.id).all()
+    person_ids = [p.id for p in persons]
+    name_map = {p.id: p.name for p in persons}
+
+    recs = await SalaryRecord.filter(person_id__in=person_ids, year=year).all()
+
+    # Current year aggregates
+    agg = {}
+    for r in recs:
+        pid = r.person_id
+        cur = agg.get(pid, {
+            "income": Decimal("0"),
+            "deductions": Decimal("0"),
+            "net": Decimal("0"),
+            "benefits": Decimal("0"),
+        })
+        cur["income"] += _gross_income_full(r)
+        cur["deductions"] += _deductions_sum(r)
+        cur["net"] += _unified_net_income(r)
+        cur["benefits"] += _benefits_sum(r)
+        agg[pid] = cur
+
+    # Previous year nets for YoY
+    prev_recs = await SalaryRecord.filter(person_id__in=person_ids, year=year - 1).all()
+    prev_net = {}
+    for r in prev_recs:
+        prev_net[r.person_id] = prev_net.get(r.person_id, Decimal("0")) + _unified_net_income(r)
+
+    rows: List[AnnualTableRow] = []
+    for pid, cur in agg.items():
+        pn = prev_net.get(pid, Decimal("0"))
+        yoy = float(((cur["net"] - pn) / pn * 100)) if pn > 0 else None
+        rows.append(AnnualTableRow(
+            person_id=pid,
+            person_name=name_map.get(pid, str(pid)),
+            year=year,
+            total_income=float(cur["income"]),
+            total_deductions=float(cur["deductions"]),
+            total_net_income=float(cur["net"]),
+            benefits_total=float(cur["benefits"]),
+            yoy_growth=yoy,
+        ))
+
+    # Sort by total_net_income desc
+    rows.sort(key=lambda r: r.total_net_income, reverse=True)
+    return rows

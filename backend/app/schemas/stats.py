@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, List
+from typing import Dict, List, Optional
 from decimal import Decimal
 
 
@@ -86,3 +86,92 @@ class IncomeComposition(BaseModel):
     allowances_percent: float
     benefits_percent: float
     other_percent: float
+
+
+class MonthlyNetIncome(BaseModel):
+    year: int
+    month: int
+    net_income: float
+
+
+class GrossVsNetMonthly(BaseModel):
+    year: int
+    month: int
+    gross_income: float
+    net_income: float
+
+
+class DeductionsBreakdownItem(BaseModel):
+    category: str
+    amount: float
+    percent: float
+
+
+class DeductionsMonthly(BaseModel):
+    year: int
+    month: int
+    pension_insurance: float
+    medical_insurance: float
+    unemployment_insurance: float
+    critical_illness_insurance: float
+    enterprise_annuity: float
+    housing_fund: float
+    other_deductions: float
+    total: float
+
+
+class DeductionsBreakdown(BaseModel):
+    summary: List[DeductionsBreakdownItem]
+    monthly: List[DeductionsMonthly]
+
+
+class ContributionsCumulativePoint(BaseModel):
+    year: int
+    month: int
+    pension_cumulative: float
+    medical_cumulative: float
+    housing_fund_cumulative: float
+
+
+class ContributionsCumulative(BaseModel):
+    person_id: int
+    person_name: str
+    pension_history: Decimal
+    medical_history: Decimal
+    housing_fund_history: Decimal
+    points: List[ContributionsCumulativePoint]
+    pension_system_total: float
+    medical_system_total: float
+    housing_fund_system_total: float
+    pension_total: float
+    medical_total: float
+    housing_fund_total: float
+
+
+class MonthlyTableRow(BaseModel):
+    person_id: int
+    person_name: str
+    year: int
+    month: int
+    base_salary: float
+    performance_salary: float
+    high_temp_allowance: float
+    low_temp_allowance: float
+    computer_allowance: float
+    other_income: float
+    benefits_total: float
+    deductions_total: float
+    tax: float
+    net_income: float
+    note: Optional[str]
+
+
+class AnnualTableRow(BaseModel):
+    person_id: int
+    person_name: str
+    year: int
+    total_income: float
+    total_deductions: float
+    total_net_income: float
+    benefits_total: float
+    yoy_growth: Optional[float]
