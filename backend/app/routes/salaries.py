@@ -147,8 +147,7 @@ async def update_salary(record_id: int, payload: SalaryUpdate, user=Depends(get_
     if not rec:
         raise HTTPException(status_code=404, detail="记录不存在")
     for field, value in payload.model_dump(exclude_unset=True).items():
-        if field != 'auto_tax':
-            setattr(rec, field, value)
+        setattr(rec, field, value)
     await rec.save()
     calc = compute_payroll(
         base_salary=rec.base_salary,
@@ -169,10 +168,8 @@ async def update_salary(record_id: int, payload: SalaryUpdate, user=Depends(get_
         housing_fund=rec.housing_fund,
         other_deductions=rec.other_deductions,
         tax=rec.tax,
-        auto_tax=payload.auto_tax or False,
     )
     rec.tax = calc["tax"]
-    setattr(rec, field, value)
     await rec.save()
     return to_out(rec)
 

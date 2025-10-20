@@ -106,15 +106,19 @@ async def yearly_stats(user= Depends(get_current_user), person_id: Optional[int]
             tax=r.tax,
         )
         allowances_total = r.high_temp_allowance + r.low_temp_allowance + r.computer_allowance
-        insurance_total = (r.pension_insurance + r.medical_insurance + r.unemployment_insurance +
-                          r.critical_illness_insurance + r.enterprise_annuity + r.housing_fund)
-        allowances_total = r.high_temp_allowance + r.low_temp_allowance + r.meal_allowance
         bonuses_total = r.mid_autumn_benefit + r.dragon_boat_benefit + r.spring_festival_benefit + r.other_income
         insurance_total = r.pension_insurance + r.medical_insurance + r.unemployment_insurance + r.critical_illness_insurance + r.enterprise_annuity + r.housing_fund
         
         s = stats_map.get(r.person_id, {
-            "months": 0, "gross": 0.0, "net": 0.0, "insurance": 0.0, "tax": 0.0, "allowances": 0.0, "bonuses": 0.0,
-            "actual_take_home": 0.0, "non_cash_benefits": 0.0
+            "months": 0,
+            "gross": Decimal("0"),
+            "net": Decimal("0"),
+            "insurance": Decimal("0"),
+            "tax": Decimal("0"),
+            "allowances": Decimal("0"),
+            "bonuses": Decimal("0"),
+            "actual_take_home": Decimal("0"),
+            "non_cash_benefits": Decimal("0"),
         })
         s["months"] += 1
         s["gross"] += calc["gross_income"]
@@ -122,14 +126,13 @@ async def yearly_stats(user= Depends(get_current_user), person_id: Optional[int]
         s["insurance"] += insurance_total
         s["tax"] += calc["tax"]
         s["allowances"] += allowances_total
-        s["bonuses"] += 0.0
         s["actual_take_home"] += calc["actual_take_home"]
         s["non_cash_benefits"] += calc["non_cash_benefits"]
         s["bonuses"] += bonuses_total
         stats_map[r.person_id] = s
     result: List[YearlyStats] = []
     for pid, s in stats_map.items():
-        avg_net = s["net"] / s["months"] if s["months"] else 0.0
+        avg_net = s["net"] / s["months"] if s["months"] else Decimal("0")
         result.append(YearlyStats(
             person_id=pid,
             year=year,
@@ -152,11 +155,11 @@ async def family_summary(user= Depends(get_current_user), year: int = Query(...)
     persons = await Person.filter(user_id=user.id).all()
     person_ids = [p.id for p in persons]
     recs = await SalaryRecord.filter(person_id__in=person_ids, year=year).all()
-    totals = {pid: 0.0 for pid in person_ids}
-    insurance_total = 0.0
-    tax_total = 0.0
-    total_gross = 0.0
-    total_net = 0.0
+    totals = {pid: Decimal("0") for pid in person_ids}
+    insurance_total = Decimal("0")
+    tax_total = Decimal("0")
+    total_gross = Decimal("0")
+    total_net = Decimal("0")
     for r in recs:
         calc = compute_payroll(
             base_salary=r.base_salary,
@@ -182,10 +185,6 @@ async def family_summary(user= Depends(get_current_user), year: int = Query(...)
                          r.critical_illness_insurance + r.enterprise_annuity + r.housing_fund)
         totals[r.person_id] += calc["net_income"]
         insurance_total += insurance_calc
-        record_insurance_total = r.pension_insurance + r.medical_insurance + r.unemployment_insurance + r.critical_illness_insurance + r.enterprise_annuity + r.housing_fund
-        
-        totals[r.person_id] += calc["net_income"]
-        insurance_total += record_insurance_total
         tax_total += calc["tax"]
         total_gross += calc["gross_income"]
         total_net += calc["net_income"]
