@@ -481,20 +481,20 @@ onMounted(async () => {
         </el-table-column>
         <el-table-column prop="year" label="日期" width="80" />
         <el-table-column prop="months" label="月数" width="80" />
-        <el-table-column prop="total_gross" label="税前收入" width="120">
-          <template #default="{ row }">¥{{ row.total_gross.toLocaleString() }}</template>
+        <el-table-column prop="total_gross" label="税前收入" width="120" align="right">
+          <template #default="{ row }">{{ formatCurrency(row.total_gross) }}</template>
         </el-table-column>
-        <el-table-column prop="total_net" label="税后收入" width="120">
-          <template #default="{ row }">¥{{ row.total_net.toLocaleString() }}</template>
+        <el-table-column prop="total_net" label="税后收入" width="120" align="right">
+          <template #default="{ row }">{{ formatCurrency(row.total_net) }}</template>
         </el-table-column>
-        <el-table-column prop="avg_net" label="平均薪资" width="120">
-          <template #default="{ row }">¥{{ Math.round(row.avg_net).toLocaleString() }}</template>
+        <el-table-column prop="avg_net" label="平均薪资" width="120" align="right">
+          <template #default="{ row }">{{ formatCurrency(row.avg_net) }}</template>
         </el-table-column>
-        <el-table-column prop="tax_total" label="总税额" width="120">
-          <template #default="{ row }">¥{{ row.tax_total.toLocaleString() }}</template>
+        <el-table-column prop="tax_total" label="总税额" width="120" align="right">
+          <template #default="{ row }">-{{ formatCurrency(row.tax_total) }}</template>
         </el-table-column>
-        <el-table-column prop="insurance_total" label="总保险" width="120">
-          <template #default="{ row }">¥{{ row.insurance_total.toLocaleString() }}</template>
+        <el-table-column prop="insurance_total" label="总保险" width="120" align="right">
+          <template #default="{ row }">-{{ formatCurrency(row.insurance_total) }}</template>
         </el-table-column>
       </el-table>
     </el-card>
@@ -503,8 +503,8 @@ onMounted(async () => {
     <el-card class="empty-state-card" shadow="hover" v-if="!loading && yearly.length === 0">
       <div class="empty-container">
         <div class="empty-icon">📊</div>
-        <h3 class="empty-title">暂无统计数据</h3>
-        <p class="empty-description">
+        <h3 class="empty-title">暂无统计信息记录</h3>
+
           {{ selectedPersonId 
             ? '该用户在所选年份还没有工资记录，添加工资数据后即可查看详细的统计分析' 
             : '还没有任何数据记录，点击下面的按钮开始添加' 
