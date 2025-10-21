@@ -5,6 +5,7 @@ import { useUserStore } from '../store/user'
 import * as echarts from 'echarts'
 import { Plus } from '@element-plus/icons-vue'
 import { TrendingUp } from 'lucide-vue-next'
+import { formatCurrency } from '../utils/number'
 
 const user = useUserStore()
 const year = ref(new Date().getFullYear())
@@ -473,7 +474,7 @@ onMounted(async () => {
           <span class="card-title">数据表格</span>
         </div>
       </template>
-      <el-table :data="yearly" stripe>
+      <el-table :data="yearly" stripe :header-cell-style="{ padding: '14px 16px', fontWeight: 600, background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }" :cell-style="{ padding: '12px 16px', lineHeight: '20px' }">
         <el-table-column label="姓名" width="120">
           <template #default="{ row }">
             {{ persons.find(p => p.id === row.person_id)?.name || `Person ${row.person_id}` }}
@@ -481,19 +482,19 @@ onMounted(async () => {
         </el-table-column>
         <el-table-column prop="year" label="日期" width="80" />
         <el-table-column prop="months" label="月数" width="80" />
-        <el-table-column prop="total_gross" label="税前收入" width="120" align="right">
+        <el-table-column prop="total_gross" label="税前收入" width="120" align="right" show-overflow-tooltip>
           <template #default="{ row }">{{ formatCurrency(row.total_gross) }}</template>
         </el-table-column>
-        <el-table-column prop="total_net" label="税后收入" width="120" align="right">
+        <el-table-column prop="total_net" label="税后收入" width="120" align="right" show-overflow-tooltip>
           <template #default="{ row }">{{ formatCurrency(row.total_net) }}</template>
         </el-table-column>
-        <el-table-column prop="avg_net" label="平均薪资" width="120" align="right">
+        <el-table-column prop="avg_net" label="平均薪资" width="120" align="right" show-overflow-tooltip>
           <template #default="{ row }">{{ formatCurrency(row.avg_net) }}</template>
         </el-table-column>
-        <el-table-column prop="tax_total" label="总税额" width="120" align="right">
+        <el-table-column prop="tax_total" label="总税额" width="120" align="right" show-overflow-tooltip>
           <template #default="{ row }">-{{ formatCurrency(row.tax_total) }}</template>
         </el-table-column>
-        <el-table-column prop="insurance_total" label="总保险" width="120" align="right">
+        <el-table-column prop="insurance_total" label="总保险" width="120" align="right" show-overflow-tooltip>
           <template #default="{ row }">-{{ formatCurrency(row.insurance_total) }}</template>
         </el-table-column>
       </el-table>
@@ -504,7 +505,6 @@ onMounted(async () => {
       <div class="empty-container">
         <div class="empty-icon">📊</div>
         <h3 class="empty-title">暂无统计信息记录</h3>
-
           {{ selectedPersonId 
             ? '该用户在所选年份还没有工资记录，添加工资数据后即可查看详细的统计分析' 
             : '还没有任何数据记录，点击下面的按钮开始添加' 
