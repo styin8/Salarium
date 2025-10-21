@@ -32,7 +32,7 @@ watch(() => stats.refreshToken, () => { load() })
     <div v-if="loading" style="padding: 16px"><el-skeleton :rows="6" animated /></div>
     <div v-else-if="error" class="empty"><p>加载失败，请重试</p><el-button type="primary" @click="load">重试</el-button></div>
     <EmptyState v-else-if="!hasData" />
-    <el-card v-else shadow="hover">
+    <el-card v-else shadow="hover" :body-style="{ padding: '0' }">
       <DeductionsBreakdown :summary="info.summary" :monthly="info.monthly" />
     </el-card>
   </div>
