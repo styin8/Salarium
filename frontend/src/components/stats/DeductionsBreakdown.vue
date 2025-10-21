@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { initChart, baseGrid, axisCurrencyFormatter, currencyFormatter, responsiveResize } from '../../utils/charts'
+import ChartCard from './ChartCard.vue'
 
 const props = defineProps({
   summary: { type: Array, default: () => [] }, // DeductionsBreakdownItem[]
@@ -29,7 +30,7 @@ function renderStack() {
   const labels = props.monthly.map(m => `${m.month}月`)
   stackChart.setOption({
     tooltip: { trigger: 'axis', valueFormatter: (v) => currencyFormatter(v) },
-    legend: { bottom: 8 },
+    legend: { top: 8 },
     grid: baseGrid(),
     xAxis: { type: 'category', data: labels },
     yAxis: { type: 'value', axisLabel: { formatter: axisCurrencyFormatter } },
@@ -63,18 +64,14 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-    <div>
+    <ChartCard title="扣除项占比">
       <div ref="pieEl" style="height:320px;width:100%"></div>
-      <div class="chart-footer"><div class="chart-title">扣除项占比</div></div>
-    </div>
-    <div>
+    </ChartCard>
+    <ChartCard title="扣除项月度趋势">
       <div ref="stackEl" style="height:320px;width:100%"></div>
-      <div class="chart-footer"><div class="chart-title">扣除项月度趋势</div></div>
-    </div>
+    </ChartCard>
   </div>
 </template>
 
 <style scoped>
-.chart-footer { display:flex; gap:8px; align-items:center; justify-content: center; padding: 8px 0 4px; color:#475569; flex-wrap: wrap }
-.chart-title { font-weight: 600 }
 </style>

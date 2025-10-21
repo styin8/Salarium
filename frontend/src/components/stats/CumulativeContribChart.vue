@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { initChart, baseGrid, axisCurrencyFormatter, currencyFormatter, responsiveResize } from '../../utils/charts'
+import ChartCard from './ChartCard.vue'
 
 const props = defineProps({
   points: { type: Array, default: () => [] },
@@ -19,7 +20,7 @@ function render() {
 
   chart.setOption({
     tooltip: { trigger: 'axis', valueFormatter: (v) => currencyFormatter(v) },
-    legend: { bottom: 8 },
+    legend: { top: 8 },
     grid: baseGrid(),
     xAxis: { type: 'category', data: labels },
     yAxis: { type: 'value', axisLabel: { formatter: axisCurrencyFormatter } },
@@ -38,17 +39,10 @@ onBeforeUnmount(() => { cleanupResize && cleanupResize(); chart && chart.dispose
 </script>
 
 <template>
-  <div>
-    <div class="chart" ref="el" style="height: 360px; width: 100%"></div>
-    <div class="chart-footer">
-      <div class="chart-title">{{ title }}</div>
-      <div v-if="note" class="chart-note">{{ note }}</div>
-    </div>
-  </div>
+  <ChartCard :title="title" :note="note">
+    <div class="chart" ref="el" style="height: 320px; width: 100%"></div>
+  </ChartCard>
 </template>
 
 <style scoped>
-.chart-footer { display:flex; gap:8px; align-items:center; justify-content: center; padding: 8px 0 4px; color:#475569; flex-wrap: wrap }
-.chart-title { font-weight: 600 }
-.chart-note { font-size:12px; color:#94a3b8 }
 </style>
