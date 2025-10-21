@@ -22,8 +22,9 @@ function render() {
   const net = points.map(p => p.net_income)
 
   chart.setOption({
+    title: { text: props.title },
     tooltip: { trigger: 'axis', valueFormatter: (v) => currencyFormatter(v) },
-    legend: { data: ['应发工资', '实际到手金额'], top: 8 },
+    legend: { data: ['应发工资', '实际到手金额'] },
     grid: baseGrid(),
     xAxis: { type: 'category', data: labels },
     yAxis: { type: 'value', axisLabel: { formatter: axisCurrencyFormatter } },

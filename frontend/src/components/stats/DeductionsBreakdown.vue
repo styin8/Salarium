@@ -17,9 +17,11 @@ function renderPie() {
   if (!pieEl.value) return
   if (!pieChart) pieChart = initChart(pieEl.value)
   pieChart.setOption({
+    title: { text: '扣除项占比' },
     tooltip: { trigger: 'item', formatter: (p) => `${p.name}: ${currencyFormatter(p.value)} (${p.percent}%)` },
+    legend: {},
     series: [
-      { type: 'pie', radius: ['40%', '70%'], data: props.summary.map(s => ({ name: s.category, value: s.amount })) },
+      { type: 'pie', radius: ['40%', '70%'], center: ['50%','42%'], data: props.summary.map(s => ({ name: s.category, value: s.amount })) },
     ],
   })
 }
@@ -29,8 +31,9 @@ function renderStack() {
   if (!stackChart) stackChart = initChart(stackEl.value)
   const labels = props.monthly.map(m => `${m.month}月`)
   stackChart.setOption({
+    title: { text: '扣除项月度趋势' },
     tooltip: { trigger: 'axis', valueFormatter: (v) => currencyFormatter(v) },
-    legend: { top: 8 },
+    legend: {},
     grid: baseGrid(),
     xAxis: { type: 'category', data: labels },
     yAxis: { type: 'value', axisLabel: { formatter: axisCurrencyFormatter } },

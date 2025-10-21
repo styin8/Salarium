@@ -13,10 +13,6 @@ const props = defineProps({
     <div class="chart-body">
       <slot />
     </div>
-    <div v-if="title || note" class="chart-footer">
-      <div class="chart-title" :title="title">{{ title }}</div>
-      <div v-if="note" class="chart-note">{{ note }}</div>
-    </div>
   </div>
 </template>
 
@@ -25,6 +21,7 @@ const props = defineProps({
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-height: 320px;
 }
 
 /* Header aligned with Salaries table header style */
@@ -37,35 +34,10 @@ const props = defineProps({
   border-bottom: 1px solid #e5e7eb;
   font-weight: 600;
 }
-.chart-header.sticky {
-  position: sticky;
-  top: 0;
-  z-index: 7;
-  background: #fff;
-}
 
-/* Plot container padding aligns with header left/right */
+/* Plot container: let ECharts control paddings via grid */
 .chart-body {
   width: 100%;
-  padding: 12px 16px;
+  padding: 0;
 }
-
-/* Footer title placed below chart, single line, aligned with header paddings */
-.chart-footer {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 8px 16px 12px;
-  color: #475569;
-  flex-wrap: nowrap;
-}
-.chart-title {
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-.chart-note { font-size: 12px; color: #94a3b8; white-space: nowrap; }
 </style>

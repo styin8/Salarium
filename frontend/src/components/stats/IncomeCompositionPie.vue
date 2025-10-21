@@ -42,17 +42,18 @@ function render() {
   ]
 
   chart.setOption({
+    title: { text: props.title },
     tooltip: {
       trigger: 'item',
       formatter: (p) => `${p.name}: ${currencyFormatter(p.value)} (${p.percent}%)`,
     },
-    legend: { top: 8 },
+    legend: {},
     series: [
       {
         type: 'pie',
         name: '构成',
         radius: ['40%', '70%'],
-        center: ['50%', '55%'],
+        center: ['50%', '42%'],
         data: seriesData,
         label: { formatter: '{b}: {d}%' },
       },

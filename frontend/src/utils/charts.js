@@ -10,7 +10,7 @@ const theme = {
     color: '#334155',
   },
   // Unified layout to avoid overlapping titles/legends with plotting area
-  grid: { top: 8, right: 16, bottom: 56, left: 16, containLabel: true },
+  grid: { top: 16, right: 24, bottom: 96, left: 48, containLabel: true },
   tooltip: {
     backgroundColor: 'rgba(17,24,39,0.9)',
     borderWidth: 0,
@@ -18,8 +18,16 @@ const theme = {
     extraCssText: 'box-shadow:0 6px 18px rgba(0,0,0,0.2); border-radius:8px; padding:10px 12px;',
   },
   legend: {
-    top: 8,
+    show: true,
+    bottom: 8,
+    left: 'center',
     textStyle: { color: '#475569' },
+  },
+  title: {
+    show: true,
+    bottom: 40,
+    left: 'center',
+    textStyle: { fontSize: 14, fontWeight: 600, color: '#334155' },
   },
   categoryAxis: {
     axisLine: { lineStyle: { color: '#e2e8f0' } },
@@ -45,7 +53,7 @@ export function initChart(el) {
 }
 
 export function baseGrid() {
-  return { top: 8, right: 16, bottom: 56, left: 16, containLabel: true }
+  return { top: 16, right: 24, bottom: 96, left: 48, containLabel: true }
 }
 
 export function currencyFormatter(val) {

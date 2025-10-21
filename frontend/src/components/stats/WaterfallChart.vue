@@ -27,6 +27,7 @@ function render() {
   const data = [gross, -ded, net]
 
   chart.setOption({
+    title: { text: props.title },
     grid: baseGrid(),
     xAxis: { type: 'category', data: ['应发工资', '扣除', '实际到手金额'] },
     yAxis: { type: 'value', axisLabel: { formatter: axisCurrencyFormatter } },

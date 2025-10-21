@@ -22,6 +22,7 @@ function render() {
   const values = points.map(p => p.net_income)
 
   chart.setOption({
+    title: { text: props.title },
     tooltip: { trigger: 'axis', valueFormatter: (v) => currencyFormatter(v) },
     grid: baseGrid(),
     xAxis: { type: 'category', data: labels },

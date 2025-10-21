@@ -34,8 +34,9 @@ function render() {
   const rows = byMonth()
 
   chart.setOption({
+    title: { text: props.title },
     tooltip: { trigger: 'axis', valueFormatter: (v) => currencyFormatter(v) },
-    legend: { top: 8 },
+    legend: {},
     grid: baseGrid(),
     xAxis: { type: 'category', data: rows.map(r => `${r.month}月`) },
     yAxis: { type: 'value', axisLabel: { formatter: axisCurrencyFormatter } },
