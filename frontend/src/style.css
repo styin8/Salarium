@@ -511,10 +511,16 @@ input:disabled, textarea:disabled, select:disabled {
   font-size: 14px;
 }
 
-/* Header style: background and bottom border */
+/* Header style: padding, font weight, background and bottom border */
 .el-table .el-table__header th.el-table__cell {
   background-color: #f9fafb;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+.el-table .el-table__header th.el-table__cell .cell {
+  padding: 14px 16px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
 }
 
 /* Body cell bottom border */
@@ -526,14 +532,33 @@ input:disabled, textarea:disabled, select:disabled {
 .el-table .cell {
   padding: 12px 16px;
   line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure minimum row height */
+.el-table .el-table__row .el-table__cell .cell {
+  min-height: 20px; /* with padding 12+12 -> row-height >= 44px */
+}
+
+/* Column minimum widths */
+/* Numeric/amount columns (usually right-aligned) */
+.el-table .el-table__cell.is-right .cell {
+  min-width: 120px;
 }
 
 /* Sticky header z-index and background to avoid overlap */
 .el-table .el-table__header-wrapper {
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 6;
   background: #fff;
+}
+
+/* Horizontal scroll on narrow screens without squashing columns */
+.el-table .el-table__body-wrapper {
+  overflow-x: auto;
 }
 
 /* Row hover feedback */
@@ -550,4 +575,16 @@ input:disabled, textarea:disabled, select:disabled {
 .el-card .el-table {
   border-radius: 12px;
   overflow: hidden;
+}
+
+/* Ensure Salaries page custom table matches spacing/readability */
+.salary-table th {
+  background: #f9fafb;
+  padding: 14px 16px !important;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+}
+.salary-table td {
+  padding: 12px 16px !important;
+  line-height: 20px;
 }

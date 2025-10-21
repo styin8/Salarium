@@ -85,7 +85,7 @@ watch(() => stats.refreshToken, () => { load() })
           </div>
         </template>
 
-        <el-table :data="monthly" border stripe height="420">
+        <el-table :data="monthly" border stripe height="420" :header-cell-style="{ padding: '14px 16px', fontWeight: 600, background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }" :cell-style="{ padding: '12px 16px', lineHeight: '20px' }">
           <el-table-column prop="person_name" label="姓名" width="120" fixed />
           <el-table-column prop="year" label="年份" width="90" sortable />
           <el-table-column prop="month" label="月份" width="90" sortable />
@@ -172,7 +172,7 @@ watch(() => stats.refreshToken, () => { load() })
           </div>
         </template>
 
-        <el-table :data="annual" border stripe>
+        <el-table :data="annual" border stripe :header-cell-style="{ padding: '14px 16px', fontWeight: 600, background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }" :cell-style="{ padding: '12px 16px', lineHeight: '20px' }">
           <el-table-column prop="person_name" label="姓名" width="120" />
 
           <!-- income totals -->
