@@ -48,13 +48,13 @@ watch(() => stats.refreshToken, () => { load() })
         ]" />
       </el-card>
 
-      <el-card shadow="hover">
+      <el-card shadow="hover" :body-style="{ padding: '0' }">
         <NetIncomeChart :data="net" />
       </el-card>
 
       <div class="two-col">
-        <el-card shadow="hover"><GrossVsNetBar :data="gvn" /></el-card>
-        <el-card shadow="hover"><WaterfallChart :data="gvn" /></el-card>
+        <el-card shadow="hover" :body-style="{ padding: '0' }"><GrossVsNetBar :data="gvn" /></el-card>
+        <el-card shadow="hover" :body-style="{ padding: '0' }"><WaterfallChart :data="gvn" /></el-card>
       </div>
     </template>
   </div>

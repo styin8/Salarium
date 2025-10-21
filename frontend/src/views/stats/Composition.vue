@@ -33,8 +33,8 @@ watch(() => stats.refreshToken, () => { load() })
     <div v-else-if="error" class="empty"><p>加载失败，请重试</p><el-button type="primary" @click="load">重试</el-button></div>
     <EmptyState v-else-if="!hasData" />
     <div v-else class="two-col">
-      <el-card shadow="hover"><IncomeCompositionPie :data="comp" /></el-card>
-      <el-card shadow="hover"><StackedAreaIncome :data="comp" /></el-card>
+      <el-card shadow="hover" :body-style="{ padding: '0' }"><IncomeCompositionPie :data="comp" /></el-card>
+      <el-card shadow="hover" :body-style="{ padding: '0' }"><StackedAreaIncome :data="comp" /></el-card>
     </div>
   </div>
 </template>
