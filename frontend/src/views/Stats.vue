@@ -473,30 +473,32 @@ onMounted(async () => {
           <span class="card-title">数据表格</span>
         </div>
       </template>
-      <el-table :data="yearly" stripe>
-        <el-table-column label="姓名" width="120">
-          <template #default="{ row }">
-            {{ persons.find(p => p.id === row.person_id)?.name || `Person ${row.person_id}` }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="year" label="日期" width="80" />
-        <el-table-column prop="months" label="月数" width="80" />
-        <el-table-column prop="total_gross" label="税前收入" width="120" align="right">
-          <template #default="{ row }">{{ formatCurrency(row.total_gross) }}</template>
-        </el-table-column>
-        <el-table-column prop="total_net" label="税后收入" width="120" align="right">
-          <template #default="{ row }">{{ formatCurrency(row.total_net) }}</template>
-        </el-table-column>
-        <el-table-column prop="avg_net" label="平均薪资" width="120" align="right">
-          <template #default="{ row }">{{ formatCurrency(row.avg_net) }}</template>
-        </el-table-column>
-        <el-table-column prop="tax_total" label="总税额" width="120" align="right">
-          <template #default="{ row }">-{{ formatCurrency(row.tax_total) }}</template>
-        </el-table-column>
-        <el-table-column prop="insurance_total" label="总保险" width="120" align="right">
-          <template #default="{ row }">-{{ formatCurrency(row.insurance_total) }}</template>
-        </el-table-column>
-      </el-table>
+      <div class="table-scroll-x">
+        <el-table :data="yearly" border stripe height="420">
+          <el-table-column label="姓名" width="120" show-overflow-tooltip>
+            <template #default="{ row }">
+              {{ persons.find(p => p.id === row.person_id)?.name || `Person ${row.person_id}` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="year" label="日期" width="80" />
+          <el-table-column prop="months" label="月数" width="80" />
+          <el-table-column prop="total_gross" label="税前收入" width="120" align="right" show-overflow-tooltip>
+            <template #default="{ row }">{{ formatCurrency(row.total_gross) }}</template>
+          </el-table-column>
+          <el-table-column prop="total_net" label="税后收入" width="120" align="right" show-overflow-tooltip>
+            <template #default="{ row }">{{ formatCurrency(row.total_net) }}</template>
+          </el-table-column>
+          <el-table-column prop="avg_net" label="平均薪资" width="120" align="right" show-overflow-tooltip>
+            <template #default="{ row }">{{ formatCurrency(row.avg_net) }}</template>
+          </el-table-column>
+          <el-table-column prop="tax_total" label="总税额" width="120" align="right" show-overflow-tooltip>
+            <template #default="{ row }">-{{ formatCurrency(row.tax_total) }}</template>
+          </el-table-column>
+          <el-table-column prop="insurance_total" label="总保险" width="120" align="right" show-overflow-tooltip>
+            <template #default="{ row }">-{{ formatCurrency(row.insurance_total) }}</template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-card>
 
     <!-- Empty State -->

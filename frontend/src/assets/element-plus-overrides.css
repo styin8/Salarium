@@ -1,0 +1,75 @@
+/* Element Plus table overrides to align with Salaries table visuals */
+
+/* Card/table container spacing and radius mimic Salaries cards */
+.el-card.data-table-card .el-card__body,
+.el-card.chart-card .el-card__body {
+  padding: 0;
+}
+
+/* Generic table container rounding and shadow */
+.el-table,
+.el-table--border,
+.el-table--striped {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Header style */
+.el-table th.el-table__cell {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Body cell style */
+.el-table td.el-table__cell {
+  font-size: 14px;
+  padding: 16px;
+  color: #374151;
+}
+
+/* Remove inner extra padding so content aligns with Salaries table */
+.el-table .cell {
+  padding: 0;
+}
+
+/* Hover highlight close to Salaries */
+.el-table__body tr:hover > td.el-table__cell {
+  background-color: #f3f4f6;
+}
+
+/* Sticky header safety: ensure header stays above body content */
+.el-table__header-wrapper thead th.el-table__cell {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Tooltip for overflowing text columns already handled by show-overflow-tooltip. Ensure ellipsis style */
+.el-table .cell > span {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Utility alignment for currency columns in case align prop is missing */
+.el-table .is-right, .text-right {
+  text-align: right;
+}
+
+/* Make table horizontally scrollable in narrow containers */
+.table-scroll-x {
+  overflow-x: auto;
+}
+
+/* Empty/loading/error shared styles reused in stats */
+.empty-container { padding: 3rem; text-align: center; }
+.empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+.empty-title { font-size: 1.5rem; font-weight: 600; color: #111827; margin-bottom: 0.5rem; }
+.empty-description { color: #6b7280; margin-bottom: 1.5rem; }

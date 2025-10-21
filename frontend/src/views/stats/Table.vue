@@ -85,84 +85,86 @@ watch(() => stats.refreshToken, () => { load() })
           </div>
         </template>
 
-        <el-table :data="monthly" border stripe height="420">
-          <el-table-column prop="person_name" label="姓名" width="120" fixed />
-          <el-table-column prop="year" label="年份" width="90" sortable />
-          <el-table-column prop="month" label="月份" width="90" sortable />
+        <div class="table-scroll-x">
+          <el-table :data="monthly" border stripe height="420">
+            <el-table-column prop="person_name" label="姓名" width="120" fixed show-overflow-tooltip />
+            <el-table-column prop="year" label="年份" width="90" sortable />
+            <el-table-column prop="month" label="月份" width="90" sortable />
 
-          <!-- income fields -->
-          <el-table-column prop="base_salary" label="基本工资" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.base_salary) }}</template>
-          </el-table-column>
-          <el-table-column prop="performance_salary" label="绩效工资" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.performance_salary) }}</template>
-          </el-table-column>
-          <el-table-column prop="high_temp_allowance" label="高温补贴" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.high_temp_allowance) }}</template>
-          </el-table-column>
-          <el-table-column prop="low_temp_allowance" label="低温补贴" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.low_temp_allowance) }}</template>
-          </el-table-column>
-          <el-table-column prop="computer_allowance" label="电脑补贴" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.computer_allowance) }}</template>
-          </el-table-column>
-          <el-table-column prop="meal_allowance" label="餐补" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.meal_allowance) }}</template>
-          </el-table-column>
-          <el-table-column prop="mid_autumn_benefit" label="中秋福利" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.mid_autumn_benefit) }}</template>
-          </el-table-column>
-          <el-table-column prop="dragon_boat_benefit" label="端午福利" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.dragon_boat_benefit) }}</template>
-          </el-table-column>
-          <el-table-column prop="spring_festival_benefit" label="春节福利" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.spring_festival_benefit) }}</template>
-          </el-table-column>
-          <el-table-column prop="other_income" label="其他收入" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.other_income) }}</template>
-          </el-table-column>
+            <!-- income fields -->
+            <el-table-column prop="base_salary" label="基本工资" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.base_salary) }}</template>
+            </el-table-column>
+            <el-table-column prop="performance_salary" label="绩效工资" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.performance_salary) }}</template>
+            </el-table-column>
+            <el-table-column prop="high_temp_allowance" label="高温补贴" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.high_temp_allowance) }}</template>
+            </el-table-column>
+            <el-table-column prop="low_temp_allowance" label="低温补贴" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.low_temp_allowance) }}</template>
+            </el-table-column>
+            <el-table-column prop="computer_allowance" label="电脑补贴" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.computer_allowance) }}</template>
+            </el-table-column>
+            <el-table-column prop="meal_allowance" label="餐补" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.meal_allowance) }}</template>
+            </el-table-column>
+            <el-table-column prop="mid_autumn_benefit" label="中秋福利" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.mid_autumn_benefit) }}</template>
+            </el-table-column>
+            <el-table-column prop="dragon_boat_benefit" label="端午福利" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.dragon_boat_benefit) }}</template>
+            </el-table-column>
+            <el-table-column prop="spring_festival_benefit" label="春节福利" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.spring_festival_benefit) }}</template>
+            </el-table-column>
+            <el-table-column prop="other_income" label="其他收入" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.other_income) }}</template>
+            </el-table-column>
 
-          <!-- deduction fields -->
-          <el-table-column prop="pension_insurance" label="养老保险" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.pension_insurance) }}</template>
-          </el-table-column>
-          <el-table-column prop="medical_insurance" label="医疗保险" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.medical_insurance) }}</template>
-          </el-table-column>
-          <el-table-column prop="unemployment_insurance" label="失业保险" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.unemployment_insurance) }}</template>
-          </el-table-column>
-          <el-table-column prop="critical_illness_insurance" label="大病互助保险" width="140" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.critical_illness_insurance) }}</template>
-          </el-table-column>
-          <el-table-column prop="enterprise_annuity" label="企业年金" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.enterprise_annuity) }}</template>
-          </el-table-column>
-          <el-table-column prop="housing_fund" label="住房公积金" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.housing_fund) }}</template>
-          </el-table-column>
-          <el-table-column prop="other_deductions" label="其他扣除" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.other_deductions) }}</template>
-          </el-table-column>
+            <!-- deduction fields -->
+            <el-table-column prop="pension_insurance" label="养老保险" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.pension_insurance) }}</template>
+            </el-table-column>
+            <el-table-column prop="medical_insurance" label="医疗保险" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.medical_insurance) }}</template>
+            </el-table-column>
+            <el-table-column prop="unemployment_insurance" label="失业保险" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.unemployment_insurance) }}</template>
+            </el-table-column>
+            <el-table-column prop="critical_illness_insurance" label="大病互助保险" width="140" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.critical_illness_insurance) }}</template>
+            </el-table-column>
+            <el-table-column prop="enterprise_annuity" label="企业年金" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.enterprise_annuity) }}</template>
+            </el-table-column>
+            <el-table-column prop="housing_fund" label="住房公积金" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.housing_fund) }}</template>
+            </el-table-column>
+            <el-table-column prop="other_deductions" label="其他扣除" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.other_deductions) }}</template>
+            </el-table-column>
 
-          <!-- totals -->
-          <el-table-column prop="benefits_total" label="福利合计" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.benefits_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="income_total" label="收入合计" width="140" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.income_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="deductions_total" label="扣除合计" width="140" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.deductions_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="tax" label="个税" width="120" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.tax) }}</template>
-          </el-table-column>
-          <el-table-column prop="actual_take_home" label="实际到手金额" width="160" sortable align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.actual_take_home) }}</template>
-          </el-table-column>
-          <el-table-column prop="note" label="备注" min-width="160" show-overflow-tooltip />
-        </el-table>
+            <!-- totals -->
+            <el-table-column prop="benefits_total" label="福利合计" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.benefits_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="income_total" label="收入合计" width="140" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.income_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="deductions_total" label="扣除合计" width="140" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.deductions_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="tax" label="个税" width="120" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.tax) }}</template>
+            </el-table-column>
+            <el-table-column prop="actual_take_home" label="实际到手金额" width="160" sortable align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.actual_take_home) }}</template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" min-width="160" show-overflow-tooltip />
+          </el-table>
+        </div>
       </el-card>
 
       <el-card shadow="hover" v-if="annual.length > 0">
@@ -172,81 +174,83 @@ watch(() => stats.refreshToken, () => { load() })
           </div>
         </template>
 
-        <el-table :data="annual" border stripe>
-          <el-table-column prop="person_name" label="姓名" width="120" />
+        <div class="table-scroll-x">
+          <el-table :data="annual" border stripe height="420">
+            <el-table-column prop="person_name" label="姓名" width="120" show-overflow-tooltip />
 
-          <!-- income totals -->
-          <el-table-column prop="base_salary_total" label="基本工资" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.base_salary_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="performance_salary_total" label="绩效工资" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.performance_salary_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="high_temp_allowance_total" label="高温补贴" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.high_temp_allowance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="low_temp_allowance_total" label="低温补贴" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.low_temp_allowance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="computer_allowance_total" label="电脑补贴" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.computer_allowance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="meal_allowance_total" label="餐补" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.meal_allowance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="mid_autumn_benefit_total" label="中秋福利" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.mid_autumn_benefit_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="dragon_boat_benefit_total" label="端午福利" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.dragon_boat_benefit_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="spring_festival_benefit_total" label="春节福利" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.spring_festival_benefit_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="other_income_total" label="其他收入" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.other_income_total) }}</template>
-          </el-table-column>
+            <!-- income totals -->
+            <el-table-column prop="base_salary_total" label="基本工资" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.base_salary_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="performance_salary_total" label="绩效工资" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.performance_salary_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="high_temp_allowance_total" label="高温补贴" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.high_temp_allowance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="low_temp_allowance_total" label="低温补贴" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.low_temp_allowance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="computer_allowance_total" label="电脑补贴" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.computer_allowance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="meal_allowance_total" label="餐补" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.meal_allowance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="mid_autumn_benefit_total" label="中秋福利" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.mid_autumn_benefit_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="dragon_boat_benefit_total" label="端午福利" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.dragon_boat_benefit_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="spring_festival_benefit_total" label="春节福利" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.spring_festival_benefit_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="other_income_total" label="其他收入" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.other_income_total) }}</template>
+            </el-table-column>
 
-          <!-- deduction totals -->
-          <el-table-column prop="pension_insurance_total" label="养老保险" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.pension_insurance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="medical_insurance_total" label="医疗保险" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.medical_insurance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="unemployment_insurance_total" label="失业保险" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.unemployment_insurance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="critical_illness_insurance_total" label="大病互助保险" width="140" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.critical_illness_insurance_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="enterprise_annuity_total" label="企业年金" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.enterprise_annuity_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="housing_fund_total" label="住房公积金" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.housing_fund_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="other_deductions_total" label="其他扣除" width="120" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.other_deductions_total) }}</template>
-          </el-table-column>
+            <!-- deduction totals -->
+            <el-table-column prop="pension_insurance_total" label="养老保险" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.pension_insurance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="medical_insurance_total" label="医疗保险" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.medical_insurance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="unemployment_insurance_total" label="失业保险" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.unemployment_insurance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="critical_illness_insurance_total" label="大病互助保险" width="140" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.critical_illness_insurance_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="enterprise_annuity_total" label="企业年金" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.enterprise_annuity_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="housing_fund_total" label="住房公积金" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.housing_fund_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="other_deductions_total" label="其他扣除" width="120" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.other_deductions_total) }}</template>
+            </el-table-column>
 
-          <!-- totals -->
-          <el-table-column prop="benefits_total" label="福利合计" width="140" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.benefits_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="income_total" label="收入合计" width="140" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.income_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="deductions_total" label="扣除合计" width="140" align="right" show-overflow-tooltip>
-            <template #default="{ row }">-{{ formatCurrency(row.deductions_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="actual_take_home_total" label="实际到手金额" width="160" align="right" show-overflow-tooltip>
-            <template #default="{ row }">{{ formatCurrency(row.actual_take_home_total) }}</template>
-          </el-table-column>
-          <el-table-column prop="yoy_growth" label="增长率" width="120" sortable align="right">
-            <template #default="{ row }">{{ formatPercent(row.yoy_growth, { decimals: 1 }) }}</template>
-          </el-table-column>
-        </el-table>
+            <!-- totals -->
+            <el-table-column prop="benefits_total" label="福利合计" width="140" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.benefits_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="income_total" label="收入合计" width="140" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.income_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="deductions_total" label="扣除合计" width="140" align="right" show-overflow-tooltip>
+              <template #default="{ row }">-{{ formatCurrency(row.deductions_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="actual_take_home_total" label="实际到手金额" width="160" align="right" show-overflow-tooltip>
+              <template #default="{ row }">{{ formatCurrency(row.actual_take_home_total) }}</template>
+            </el-table-column>
+            <el-table-column prop="yoy_growth" label="增长率" width="120" sortable align="right">
+              <template #default="{ row }">{{ formatPercent(row.yoy_growth, { decimals: 1 }) }}</template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-card>
     </template>
   </div>
@@ -255,11 +259,6 @@ watch(() => stats.refreshToken, () => { load() })
 <style scoped>
 .card-header { display:flex; justify-content: space-between; align-items:center }
 .card-title { font-weight: 600 }
-
-/* Align Element Plus table spacing with Salaries page */
-:deep(.el-table th.el-table__cell) { padding: 12px 16px; background: #f9fafb; }
-:deep(.el-table td.el-table__cell) { padding: 16px; }
-:deep(.el-table .cell) { padding: 0; }
 
 /* Empty state reused style (aligned with Salaries/Persons) */
 .empty-container { padding: 3rem; text-align: center; }
