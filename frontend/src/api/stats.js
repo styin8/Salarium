@@ -6,11 +6,11 @@ function client() {
   return axios.create({ baseURL: '/api', headers: { Authorization: `Bearer ${user.token}`, 'Cache-Control': 'no-store', Pragma: 'no-cache', Expires: '0' } })
 }
 
-function paramsFromFilter({ year, personId, range }) {
+function paramsFromFilter({ year, month, personId }) {
   const params = {}
   if (year) params.year = year
+  if (month) params.month = month
   if (personId) params.person_id = personId
-  if (range && range.trim()) params.range = range.trim()
   return params
 }
 

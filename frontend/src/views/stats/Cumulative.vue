@@ -20,7 +20,7 @@ async function load() {
 
 onMounted(load)
 // Reload when filters change
-watch(() => [stats.personId, stats.year, stats.range], () => { stats.invalidate(); load() }, { deep: true })
+watch(() => [stats.personId, stats.year, stats.month], () => { stats.invalidate(); load() }, { deep: true })
 // Reload on external invalidation
 watch(() => stats.refreshToken, () => { load() })
 </script>
