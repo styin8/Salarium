@@ -35,6 +35,9 @@
 /* Remove inner extra padding so content aligns with Salaries table */
 .el-table .cell {
   padding: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Hover highlight close to Salaries */
@@ -47,6 +50,20 @@
   position: sticky;
   top: 0;
   z-index: 2;
+  background: #f9fafb;
+}
+
+/* Ensure both header and body cells have proper overflow handling */
+.el-table th.el-table__cell,
+.el-table td.el-table__cell {
+  overflow: hidden;
+}
+
+.el-table th.el-table__cell .cell,
+.el-table td.el-table__cell .cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Tooltip for overflowing text columns already handled by show-overflow-tooltip. Ensure ellipsis style */
@@ -56,6 +73,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.el-table .cell .cell-wrap {
+  display: block;
+  white-space: normal;
+  word-break: break-all;
 }
 
 /* Utility alignment for currency columns in case align prop is missing */

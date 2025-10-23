@@ -854,9 +854,11 @@ async def annual_monthly_table(
     user=Depends(get_current_user),
     year: int = Query(...),
     person_id: Optional[int] = Query(default=None),
+    hide_empty: bool = Query(default=False, description="Hide months with no data"),
 ):
     """Annual summary aggregated by month (1-12) for the given year.
     Shows all fixed fields summed across all persons (or filtered person) for each month.
+    If hide_empty=true, only returns months with actual data.
     """
     persons = await Person.filter(user_id=user.id).all()
     person_ids = [p.id for p in persons]
@@ -926,9 +928,18 @@ async def annual_monthly_table(
         agg["benefits_total"] += _benefits_sum(r)
         agg["actual_take_home"] += _unified_net_income(r)
     
+    def is_empty(agg):
+        """Check if a month's aggregation is empty (all zeros)."""
+        return all(agg[k] == Decimal("0") for k in agg.keys())
+    
     rows: List[AnnualMonthlyRow] = []
     for m in range(1, 13):
         agg = monthly_agg[m]
+        
+        # Skip empty months if hide_empty is true
+        if hide_empty and is_empty(agg):
+            continue
+            
         rows.append(AnnualMonthlyRow(
             month=m,
             base_salary=float(agg["base_salary"]),
