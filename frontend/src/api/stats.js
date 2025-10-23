@@ -76,6 +76,7 @@ export async function getAnnualMonthlyTable(filter) {
   const params = {}
   if (filter?.year) params.year = filter.year
   if (filter?.personId) params.person_id = filter.personId
+  params.hide_empty = true
   const { data } = await client().get('/stats/tables/annual-monthly', { params })
   return data
 }
