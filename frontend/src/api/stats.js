@@ -71,3 +71,11 @@ export async function getAnnualTable(filter) {
   const { data } = await client().get('/stats/tables/annual', { params: paramsFromFilter(filter) })
   return data
 }
+
+export async function getAnnualMonthlyTable(filter) {
+  const params = {}
+  if (filter?.year) params.year = filter.year
+  if (filter?.personId) params.person_id = filter.personId
+  const { data } = await client().get('/stats/tables/annual-monthly', { params })
+  return data
+}
