@@ -516,12 +516,20 @@ async def gross_vs_net_monthly(
 async def deductions_breakdown(
     user=Depends(get_current_user),
     person_id: Optional[int] = Query(default=None),
+    year: Optional[int] = Query(default=None),
+    month: Optional[int] = Query(default=None),
     range: Optional[str] = Query(default=None, description="时间范围，如 2024-01..2024-12"),
 ):
-    """Breakdown of deduction categories with monthly series and percentage share."""
+    """Breakdown of deduction categories with monthly series and percentage share.
+    支持按人员、年份、月份过滤；为兼容性保留 range，但前端已不使用。
+    """
     q = SalaryRecord.filter(person__user_id=user.id)
     if person_id:
         q = q.filter(person_id=person_id)
+    if year:
+        q = q.filter(year=year)
+    if month:
+        q = q.filter(month=month)
     recs = await q.all()
 
     if range:
@@ -658,14 +666,19 @@ async def monthly_table(
     user=Depends(get_current_user),
     person_id: Optional[int] = Query(default=None),
     year: Optional[int] = Query(default=None),
+    month: Optional[int] = Query(default=None),
     range: Optional[str] = Query(default=None),
 ):
-    """Monthly detail table: income items, deduction subtotal, net income (unified), benefits total, note."""
+    """Monthly detail table: income items, deduction subtotal, net income (unified), benefits total, note.
+    支持按人员、年份、月份过滤；为兼容性保留 range，但前端已不使用。
+    """
     q = SalaryRecord.filter(person__user_id=user.id)
     if person_id:
         q = q.filter(person_id=person_id)
     if year:
         q = q.filter(year=year)
+    if month:
+        q = q.filter(month=month)
     recs = await q.all()
 
     if range:

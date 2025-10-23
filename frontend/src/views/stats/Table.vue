@@ -9,6 +9,10 @@ const annual = ref([])
 const loading = ref(false)
 const error = ref(null)
 
+// Align table header/cell style with Salaries table
+const headerCellStyle = { background: '#f9fafb', padding: '12px 16px', color: '#374151', fontWeight: 600, fontSize: '14px' }
+const cellStyle = { padding: '16px', fontSize: '14px' }
+
 const hasData = computed(() => (monthly.value?.length || 0) > 0 || (annual.value?.length || 0) > 0)
 
 async function load() {
@@ -48,7 +52,7 @@ function exportCSV() {
 
 onMounted(load)
 // Reload when filters change
-watch(() => [stats.personId, stats.year, stats.range], () => { stats.invalidate(); load() }, { deep: true })
+watch(() => [stats.personId, stats.year, stats.month], () => { stats.invalidate(); load() }, { deep: true })
 // Reload on external invalidation
 watch(() => stats.refreshToken, () => { load() })
 </script>
@@ -86,7 +90,7 @@ watch(() => stats.refreshToken, () => { load() })
         </template>
 
         <div class="table-scroll-x">
-          <el-table :data="monthly" border stripe height="420">
+          <el-table :data="monthly" border stripe height="420" table-layout="fixed" :header-cell-style="headerCellStyle" :cell-style="cellStyle">
             <el-table-column prop="person_name" label="姓名" width="120" fixed show-overflow-tooltip />
             <el-table-column prop="year" label="年份" width="90" sortable />
             <el-table-column prop="month" label="月份" width="90" sortable />
@@ -159,7 +163,7 @@ watch(() => stats.refreshToken, () => { load() })
             <el-table-column prop="tax" label="个税" width="120" sortable align="right" show-overflow-tooltip>
               <template #default="{ row }">-{{ formatCurrency(row.tax) }}</template>
             </el-table-column>
-            <el-table-column prop="actual_take_home" label="实际到手金额" width="160" sortable align="right" show-overflow-tooltip>
+            <el-table-column prop="actual_take_home" label="实际到手金额" width="160" sortable align="right" show-overflow-tooltip class-name="highlight-col">
               <template #default="{ row }">{{ formatCurrency(row.actual_take_home) }}</template>
             </el-table-column>
             <el-table-column prop="note" label="备注" min-width="160" show-overflow-tooltip />
@@ -175,7 +179,7 @@ watch(() => stats.refreshToken, () => { load() })
         </template>
 
         <div class="table-scroll-x">
-          <el-table :data="annual" border stripe height="420">
+          <el-table :data="annual" border stripe height="420" table-layout="fixed" :header-cell-style="headerCellStyle" :cell-style="cellStyle">
             <el-table-column prop="person_name" label="姓名" width="120" show-overflow-tooltip />
 
             <!-- income totals -->
@@ -243,7 +247,7 @@ watch(() => stats.refreshToken, () => { load() })
             <el-table-column prop="deductions_total" label="扣除合计" width="140" align="right" show-overflow-tooltip>
               <template #default="{ row }">-{{ formatCurrency(row.deductions_total) }}</template>
             </el-table-column>
-            <el-table-column prop="actual_take_home_total" label="实际到手金额" width="160" align="right" show-overflow-tooltip>
+            <el-table-column prop="actual_take_home_total" label="实际到手金额" width="160" align="right" show-overflow-tooltip class-name="highlight-col">
               <template #default="{ row }">{{ formatCurrency(row.actual_take_home_total) }}</template>
             </el-table-column>
             <el-table-column prop="yoy_growth" label="增长率" width="120" sortable align="right">
@@ -259,6 +263,21 @@ watch(() => stats.refreshToken, () => { load() })
 <style scoped>
 .card-header { display:flex; justify-content: space-between; align-items:center }
 .card-title { font-weight: 600 }
+
+.table-scroll-x { overflow-x: auto; }
+
+:deep(.el-table) {
+  border-radius: 8px;
+}
+:deep(.el-table th) {
+  background: #f9fafb;
+}
+:deep(.el-table .cell) {
+  white-space: nowrap;
+}
+:deep(.el-table .highlight-col) .cell {
+  background: rgba(251, 191, 36, 0.08);
+}
 
 /* Empty state reused style (aligned with Salaries/Persons) */
 .empty-container { padding: 3rem; text-align: center; }

@@ -17,7 +17,7 @@ function cacheKey(name, filter) {
   const parts = [name]
   if (filter.personId) parts.push(`p:${filter.personId}`)
   if (filter.year) parts.push(`y:${filter.year}`)
-  if (filter.range) parts.push(`r:${filter.range}`)
+  if (filter.month) parts.push(`m:${filter.month}`)
   return parts.join('|')
 }
 
@@ -26,7 +26,7 @@ export const useStatsStore = defineStore('stats', {
     // filters
     personId: null,
     year: new Date().getFullYear(),
-    range: '',
+    month: null,
 
     // options
     persons: [],
@@ -48,7 +48,7 @@ export const useStatsStore = defineStore('stats', {
   }),
   getters: {
     filter(state) {
-      return { personId: state.personId, year: state.year, range: state.range }
+      return { personId: state.personId, year: state.year, month: state.month }
     },
   },
   actions: {
@@ -58,8 +58,8 @@ export const useStatsStore = defineStore('stats', {
     setYear(y) {
       this.year = y
     },
-    setRange(r) {
-      this.range = r || ''
+    setMonth(m) {
+      this.month = m ?? null
     },
 
     async ensurePersons() {
@@ -167,7 +167,7 @@ export const useStatsStore = defineStore('stats', {
     resetAll() {
       this.personId = null
       this.year = new Date().getFullYear()
-      this.range = ''
+      this.month = null
       this.persons = []
       this.loadingPersons = false
       this.errorPersons = null

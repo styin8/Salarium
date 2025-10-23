@@ -56,7 +56,10 @@ function onTabClick(tab) {
           <el-option v-for="p in stats.persons" :key="p.id" :label="p.name" :value="p.id" />
         </el-select>
         <el-input-number v-model="stats.year" :min="2000" :max="2100" controls-position="right" class="filter-item" />
-        <el-input v-model="stats.range" placeholder="自定义区间，如 2024-01..2024-12" class="filter-item wide" />
+        <el-select v-model="stats.month" clearable placeholder="选择月份" class="filter-item">
+          <el-option :label="'全部月份'" :value="null" />
+          <el-option v-for="m in 12" :key="m" :label="m + '月'" :value="m" />
+        </el-select>
         <el-button class="filter-item" type="primary" @click="stats.refreshAll()">刷新数据</el-button>
       </div>
     </div>
