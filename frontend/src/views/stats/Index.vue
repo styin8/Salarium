@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { Refresh } from '@element-plus/icons-vue'
 import { useStatsStore } from '../../store/stats'
 import { useUserStore } from '../../store/user'
 
@@ -18,6 +19,16 @@ const stats = useStatsStore()
 const user = useUserStore()
 
 const activeTab = ref('stats-net')
+
+const personFilter = computed({
+  get: () => stats.personId,
+  set: (value) => stats.setPerson(value ?? null),
+})
+
+const monthFilter = computed({
+  get: () => stats.month,
+  set: (value) => stats.setMonth(value ?? null),
+})
 
 let _removeInvalidateListener = null
 onMounted(async () => {
@@ -45,24 +56,80 @@ function onTabClick(tab) {
 
 <template>
   <div class="stats-page">
-    <div class="header">
-      <div>
+    <header class="page-header">
+      <div class="page-header__meta">
         <h2 class="title">统计分析</h2>
-        <p class="sub">多维图表与数据表格</p>
+        <p class="sub">数据统计分析</p>
       </div>
-      <div class="filters">
-        <el-select v-model="stats.personId" clearable placeholder="选择人员" class="filter-item">
-          <el-option :label="'所有人员'" :value="null" />
-          <el-option v-for="p in stats.persons" :key="p.id" :label="p.name" :value="p.id" />
-        </el-select>
-        <el-input-number v-model="stats.year" :min="2000" :max="2100" controls-position="right" class="filter-item" />
-        <el-select v-model="stats.month" clearable placeholder="选择月份" class="filter-item">
-          <el-option :label="'全部月份'" :value="null" />
-          <el-option v-for="m in 12" :key="m" :label="m + '月'" :value="m" />
-        </el-select>
-        <el-button class="filter-item" type="primary" @click="stats.refreshAll()">刷新数据</el-button>
+
+      <div class="page-header__toolbar">
+        <el-form class="toolbar-filters" :inline="true" size="small">
+          <el-form-item class="toolbar-field">
+            <el-select
+              v-model="personFilter"
+              placeholder="人员"
+              class="filter-control"
+              size="small"
+              clearable
+              filterable
+              :loading="stats.loadingPersons"
+            >
+              <el-option
+                v-for="p in stats.persons"
+                :key="p.id"
+                :label="p.name"
+                :value="p.id"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item class="toolbar-field">
+            <el-input-number
+              v-model="stats.year"
+              class="filter-control"
+              size="small"
+              :min="2000"
+              :max="2100"
+              controls-position="right"
+            />
+          </el-form-item>
+
+          <el-form-item class="toolbar-field">
+            <el-select
+              v-model="monthFilter"
+              placeholder="月份"
+              class="filter-control"
+              size="small"
+              clearable
+            >
+              <el-option
+                v-for="m in 12"
+                :key="m"
+                :label="m + '月'"
+                :value="m"
+              />
+            </el-select>
+          </el-form-item>
+        </el-form>
+
+        <div class="toolbar-actions">
+          <el-button
+            size="small"
+            type="primary"
+            plain
+            aria-label="刷新"
+            class="toolbar-refresh"
+            :loading="stats.isRefreshing"
+            @click="stats.refreshAll()"
+          >
+            <el-icon>
+              <Refresh />
+            </el-icon>
+            <span class="btn-text">刷新</span>
+          </el-button>
+        </div>
       </div>
-    </div>
+    </header>
 
     <el-tabs v-model="activeTab" @tab-click="onTabClick">
       <el-tab-pane v-for="t in tabs" :key="t.name" :label="t.label" :name="t.name" />
@@ -73,17 +140,126 @@ function onTabClick(tab) {
 </template>
 
 <style scoped>
-.stats-page { padding: 24px; }
-.header { display:flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; gap: 16px; }
-.title { margin: 0; font-size: 24px; }
-.sub { margin: 4px 0 0; color: #6b7280 }
-.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: flex-end; }
-.filter-item { width: 200px; }
-.filter-item.wide { width: 260px; }
+.stats-page {
+  --stats-spacing: 16px;
+  --stats-toolbar-gap: 8px;
+  --stats-filter-max-width: 240px;
+  --stats-filter-min-width: 160px;
+  --stats-title-size: 24px;
+  --stats-subtitle-size: 14px;
+  padding: 24px;
+}
 
-@media (max-width: 992px) {
-  .header { flex-direction: column; align-items: flex-start; }
-  .filters { width: 100%; justify-content: flex-start; }
-  .filter-item, .filter-item.wide { width: 100%; }
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stats-spacing);
+  margin-bottom: var(--stats-spacing);
+}
+
+.page-header__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--stats-title-size);
+  line-height: 1.2;
+}
+
+.sub {
+  margin: 0;
+  color: #6b7280;
+  font-size: var(--stats-subtitle-size);
+}
+
+.page-header__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--stats-toolbar-gap);
+}
+
+.toolbar-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--stats-toolbar-gap);
+  margin: 0;
+}
+
+.toolbar-field {
+  margin: 0;
+}
+
+.toolbar-field :deep(.el-select),
+.toolbar-field :deep(.el-input-number) {
+  min-width: var(--stats-filter-min-width);
+  max-width: var(--stats-filter-max-width);
+  width: 100%;
+}
+
+.toolbar-field :deep(.el-input-number) {
+  display: flex;
+}
+
+.toolbar-field :deep(.el-input-number .el-input__inner) {
+  text-align: left;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--stats-toolbar-gap);
+  margin-left: auto;
+}
+
+.toolbar-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar-refresh :deep(.el-icon) {
+  font-size: 16px;
+}
+
+@media (max-width: 960px) {
+  .stats-page {
+    --stats-filter-max-width: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .toolbar-field :deep(.el-select),
+  .toolbar-field :deep(.el-input-number) {
+    max-width: 100%;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .toolbar-refresh .btn-text {
+    display: none;
+  }
+
+  .toolbar-refresh {
+    justify-content: center;
+    min-width: 36px;
+    padding: 0 10px;
+  }
 }
 </style>

@@ -153,7 +153,7 @@ export default {
     selectYear: '选择年份',
     dataTable: '数据详情',
     exportData: '导出数据',
-    refreshData: '刷新数据'
+    refreshData: '刷新'
   },
   
   // Language
