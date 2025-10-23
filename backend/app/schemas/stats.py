@@ -212,3 +212,32 @@ class AnnualTableRow(BaseModel):
     benefits_total: float
     actual_take_home_total: float
     yoy_growth: Optional[float]
+
+
+class AnnualMonthlyRow(BaseModel):
+    """Annual summary by month (1-12) for stats table redesign"""
+    month: int
+    # Income fields
+    base_salary: float
+    performance_salary: float
+    high_temp_allowance: float
+    low_temp_allowance: float
+    computer_allowance: float
+    meal_allowance: float
+    mid_autumn_benefit: float
+    dragon_boat_benefit: float
+    spring_festival_benefit: float
+    other_income: float
+    # Deduction fields
+    pension_insurance: float
+    medical_insurance: float
+    unemployment_insurance: float
+    critical_illness_insurance: float
+    enterprise_annuity: float
+    housing_fund: float
+    other_deductions: float
+    # Totals
+    income_total: float
+    deductions_total: float
+    benefits_total: float
+    actual_take_home: float

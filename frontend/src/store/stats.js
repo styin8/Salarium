@@ -11,6 +11,7 @@ import {
   getContributionsCumulative,
   getMonthlyTable,
   getAnnualTable,
+  getAnnualMonthlyTable,
 } from '../api/stats'
 
 function cacheKey(name, filter) {
@@ -128,6 +129,9 @@ export const useStatsStore = defineStore('stats', {
     },
     async loadAnnualTable() {
       return await this._useCache('tableAnnual', () => getAnnualTable(this.filter))
+    },
+    async loadAnnualMonthlyTable() {
+      return await this._useCache('tableAnnualMonthly', () => getAnnualMonthlyTable(this.filter))
     },
 
     // helpers

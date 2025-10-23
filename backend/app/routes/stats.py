@@ -9,7 +9,7 @@ from ..schemas.stats import (
     MonthlyNetIncome, GrossVsNetMonthly,
     DeductionsBreakdown, DeductionsMonthly, DeductionsBreakdownItem,
     ContributionsCumulative, ContributionsCumulativePoint,
-    MonthlyTableRow, AnnualTableRow,
+    MonthlyTableRow, AnnualTableRow, AnnualMonthlyRow,
 )
 from ..utils.auth import get_current_user
 from ..services.payroll import compute_payroll
@@ -722,7 +722,7 @@ async def monthly_table(
             income_total=float(income_total),
             deductions_total=float(deductions),
             benefits_total=float(benefits),
-            actual_take_home=float(net + _D(r.other_income)),
+            actual_take_home=float(net),
             net_income=float(net),
             tax=float(_D(r.tax)),
             note=r.note,
@@ -846,4 +846,112 @@ async def annual_table(
 
     # Sort by actual_take_home_total desc
     rows.sort(key=lambda r: r.actual_take_home_total, reverse=True)
+    return rows
+
+
+@router.get("/tables/annual-monthly", response_model=List[AnnualMonthlyRow])
+async def annual_monthly_table(
+    user=Depends(get_current_user),
+    year: int = Query(...),
+    person_id: Optional[int] = Query(default=None),
+):
+    """Annual summary aggregated by month (1-12) for the given year.
+    Shows all fixed fields summed across all persons (or filtered person) for each month.
+    """
+    persons = await Person.filter(user_id=user.id).all()
+    person_ids = [p.id for p in persons]
+    
+    if person_id:
+        if person_id not in person_ids:
+            raise HTTPException(status_code=404, detail="人员不存在")
+        person_ids = [person_id]
+    
+    recs = await SalaryRecord.filter(person_id__in=person_ids, year=year).all()
+    
+    # Aggregate by month (1-12)
+    monthly_agg = {}
+    for m in range(1, 13):
+        monthly_agg[m] = {
+            "base_salary": Decimal("0"),
+            "performance_salary": Decimal("0"),
+            "high_temp_allowance": Decimal("0"),
+            "low_temp_allowance": Decimal("0"),
+            "computer_allowance": Decimal("0"),
+            "meal_allowance": Decimal("0"),
+            "mid_autumn_benefit": Decimal("0"),
+            "dragon_boat_benefit": Decimal("0"),
+            "spring_festival_benefit": Decimal("0"),
+            "other_income": Decimal("0"),
+            "pension_insurance": Decimal("0"),
+            "medical_insurance": Decimal("0"),
+            "unemployment_insurance": Decimal("0"),
+            "critical_illness_insurance": Decimal("0"),
+            "enterprise_annuity": Decimal("0"),
+            "housing_fund": Decimal("0"),
+            "other_deductions": Decimal("0"),
+            "income_total": Decimal("0"),
+            "deductions_total": Decimal("0"),
+            "benefits_total": Decimal("0"),
+            "actual_take_home": Decimal("0"),
+        }
+    
+    for r in recs:
+        m = r.month
+        agg = monthly_agg[m]
+        
+        # Accumulate income fields
+        agg["base_salary"] += _D(r.base_salary)
+        agg["performance_salary"] += _D(r.performance_salary)
+        agg["high_temp_allowance"] += _D(r.high_temp_allowance)
+        agg["low_temp_allowance"] += _D(r.low_temp_allowance)
+        agg["computer_allowance"] += _D(r.computer_allowance)
+        agg["meal_allowance"] += _D(r.meal_allowance)
+        agg["mid_autumn_benefit"] += _D(r.mid_autumn_benefit)
+        agg["dragon_boat_benefit"] += _D(r.dragon_boat_benefit)
+        agg["spring_festival_benefit"] += _D(r.spring_festival_benefit)
+        agg["other_income"] += _D(r.other_income)
+        
+        # Accumulate deduction fields
+        agg["pension_insurance"] += _D(r.pension_insurance)
+        agg["medical_insurance"] += _D(r.medical_insurance)
+        agg["unemployment_insurance"] += _D(r.unemployment_insurance)
+        agg["critical_illness_insurance"] += _D(r.critical_illness_insurance)
+        agg["enterprise_annuity"] += _D(r.enterprise_annuity)
+        agg["housing_fund"] += _D(r.housing_fund)
+        agg["other_deductions"] += _D(r.other_deductions)
+        
+        # Calculate totals
+        agg["income_total"] += _gross_income_full(r)
+        agg["deductions_total"] += _deductions_sum(r)
+        agg["benefits_total"] += _benefits_sum(r)
+        agg["actual_take_home"] += _unified_net_income(r)
+    
+    rows: List[AnnualMonthlyRow] = []
+    for m in range(1, 13):
+        agg = monthly_agg[m]
+        rows.append(AnnualMonthlyRow(
+            month=m,
+            base_salary=float(agg["base_salary"]),
+            performance_salary=float(agg["performance_salary"]),
+            high_temp_allowance=float(agg["high_temp_allowance"]),
+            low_temp_allowance=float(agg["low_temp_allowance"]),
+            computer_allowance=float(agg["computer_allowance"]),
+            meal_allowance=float(agg["meal_allowance"]),
+            mid_autumn_benefit=float(agg["mid_autumn_benefit"]),
+            dragon_boat_benefit=float(agg["dragon_boat_benefit"]),
+            spring_festival_benefit=float(agg["spring_festival_benefit"]),
+            other_income=float(agg["other_income"]),
+            pension_insurance=float(agg["pension_insurance"]),
+            medical_insurance=float(agg["medical_insurance"]),
+            unemployment_insurance=float(agg["unemployment_insurance"]),
+            critical_illness_insurance=float(agg["critical_illness_insurance"]),
+            enterprise_annuity=float(agg["enterprise_annuity"]),
+            housing_fund=float(agg["housing_fund"]),
+            other_deductions=float(agg["other_deductions"]),
+            income_total=float(agg["income_total"]),
+            deductions_total=float(agg["deductions_total"]),
+            benefits_total=float(agg["benefits_total"]),
+            actual_take_home=float(agg["actual_take_home"]),
+        ))
+    
     return rows
