@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
+import api from '../utils/axios'
 import { useUserStore } from '../store/user'
 import { useStatsStore } from '../store/stats'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -21,11 +21,6 @@ const form = ref({
   housing_fund_history: 0
 })
 const loading = ref(false)
-
-const api = axios.create({
-  baseURL: '/api',
-  headers: { Authorization: `Bearer ${user.token}` },
-})
 
 // Dialog title
 const dialogTitle = computed(() => (isEditing.value ? '编辑人员' : '添加人员'))

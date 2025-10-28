@@ -41,8 +41,12 @@ const router = createRouter({
 router.beforeEach((to) => {
   const user = useUserStore()
   const publicPaths = ['/login']
+  
   if (!user.token && !publicPaths.includes(to.path)) {
-    return '/login'
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath }
+    }
   }
 })
 

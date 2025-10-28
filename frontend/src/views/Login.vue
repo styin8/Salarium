@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import api from '../utils/axios'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '../store/user'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from 'lucide-vue-next'
@@ -15,6 +15,7 @@ const isRegisterMode = ref(false)
 
 // Router and store
 const router = useRouter()
+const route = useRoute()
 const user = useUserStore()
 
 /**
@@ -55,7 +56,7 @@ function validateForm() {
  */
 async function handleLogin() {
   try {
-    const { data } = await axios.post('/api/auth/login', {
+    const { data } = await api.post('/auth/login', {
       username: username.value,
       password: password.value
     })
@@ -63,7 +64,13 @@ async function handleLogin() {
     user.setToken(data.access_token)
     user.setUsername(username.value)
     ElMessage.success('登录成功')
-    router.push('/stats')
+    
+    const redirect = route.query.redirect
+    if (redirect && redirect !== '/login') {
+      router.replace(redirect)
+    } else {
+      router.replace('/stats')
+    }
   } catch (error) {
     console.error('Login error:', error)
     ElMessage.error('登录失败，请检查用户名和密码')
@@ -75,7 +82,7 @@ async function handleLogin() {
  */
 async function handleRegister() {
   try {
-    await axios.post('/api/auth/register', {
+    await api.post('/auth/register', {
       username: username.value,
       password: password.value
     })
