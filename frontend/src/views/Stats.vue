@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import axios from 'axios'
+import api from '../utils/axios'
 import { useUserStore } from '../store/user'
 import * as echarts from 'echarts'
 import { Plus } from '@element-plus/icons-vue'
@@ -22,7 +22,6 @@ const comparisonChartEl = ref(null)
 let monthlyChart, compositionChart, comparisonChart
 let deductionsPieChart, grossNetChart, contributionsChart
 
-const api = axios.create({ baseURL: '/api', headers: { Authorization: `Bearer ${user.token}` } })
 
 // Enhanced analytics state
 const deductionsData = ref({ summary: [], monthly: [] })

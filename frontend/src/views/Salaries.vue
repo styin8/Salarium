@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import axios from 'axios'
+import api from '../utils/axios'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -59,7 +59,6 @@ const form = ref({
   note: '',
 })
 
-const api = axios.create({ baseURL: '/api', headers: { Authorization: `Bearer ${user.token}` } })
 
 const stats = computed(() => {
   if (filteredList.value.length === 0) return { total: 0, average: 0, latest: 0 }

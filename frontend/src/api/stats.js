@@ -1,9 +1,7 @@
-import axios from 'axios'
-import { useUserStore } from '../store/user'
+import api from '../utils/axios'
 
 function client() {
-  const user = useUserStore()
-  return axios.create({ baseURL: '/api', headers: { Authorization: `Bearer ${user.token}`, 'Cache-Control': 'no-store', Pragma: 'no-cache', Expires: '0' } })
+  return api
 }
 
 function paramsFromFilter({ year, month, personId }) {
