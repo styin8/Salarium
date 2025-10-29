@@ -8,6 +8,7 @@ __pycache__/
 venv/
 .env
 .env.*
+!.env.example
 .coverage
 .pytest_cache/
 
@@ -16,6 +17,9 @@ backend/*.db
 backend/**/salarium.db
 backend/salarium.db-wal
 backend/salarium.db-shm
+
+# Docker persistent data
+data/
 
 # Logs
 *.log

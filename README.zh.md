@@ -27,11 +27,25 @@ README.zh.md      # 中文文档
 
 ## 🚀 快速开始
 
-### 前置条件
+### Docker 一键部署（推荐）
+
+使用 Docker Compose 是运行 Salarium 最简单的方式：
+
+```bash
+docker compose up -d --build
+```
+
+访问应用：http://localhost:8080
+
+详细的 Docker 部署说明请参考 [DEPLOY.md](DEPLOY.md)。
+
+### 手动部署
+
+#### 前置条件
 - Python 3.12（推荐）
 - Node.js >= 18
 
-### 后端启动
+#### 后端启动
 推荐（uv）：
 ```
 cd backend

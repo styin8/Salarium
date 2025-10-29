@@ -27,11 +27,25 @@ README.zh.md      # Chinese documentation
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Quick Start with Docker (Recommended)
+
+The easiest way to run Salarium is using Docker Compose:
+
+```bash
+docker compose up -d --build
+```
+
+Access the application at http://localhost:8080
+
+For detailed Docker deployment instructions, see [DEPLOY.md](DEPLOY.md).
+
+### Manual Setup
+
+#### Prerequisites
 - Python 3.12 (recommended)
 - Node.js >= 18
 
-### Backend Setup
+#### Backend Setup
 Recommended (uv):
 ```
 cd backend
