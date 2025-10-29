@@ -6,7 +6,7 @@ import ChartCard from './ChartCard.vue'
 const props = defineProps({
   data: { type: Array, default: () => [] }, // expects GrossVsNetMonthly
   title: { type: String, default: '应发 -> 扣除 -> 实际到手' },
-  note: { type: String, default: '应发不包含餐补与三节福利' },
+  note: { type: String, default: '' },
 })
 
 const el = ref(null)
