@@ -249,3 +249,75 @@
 .el-loading-mask {
   background-color: rgba(255, 255, 255, 0.9);
 }
+
+// ============================================
+// Filter Controls (Stats & Analytics)
+// ============================================
+// Consistent styling for filter controls across the app
+.filter-control,
+.toolbar-filters .el-select,
+.toolbar-filters .el-input-number {
+  .el-input__wrapper {
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px #e2e8f0 inset;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0 0 1px #cbd5e1 inset;
+    }
+
+    &.is-focus {
+      box-shadow: 0 0 0 1px #94a3b8 inset !important;
+    }
+  }
+
+  // Remove default focus outline
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+
+  // Enhanced keyboard navigation focus
+  &:focus-visible .el-input__wrapper {
+    box-shadow: 0 0 0 2px #94a3b8 inset !important;
+  }
+}
+
+// Input number specific adjustments
+.el-input-number {
+  &.el-input-number--small {
+    width: 100%;
+
+    .el-input-number__decrease,
+    .el-input-number__increase {
+      width: 28px;
+      background: transparent;
+      border-radius: 6px;
+
+      &:hover {
+        color: #409eff;
+      }
+    }
+  }
+}
+
+// Select dropdown alignment and styling
+.el-select-dropdown {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+
+  .el-select-dropdown__item {
+    padding: 8px 12px;
+    font-size: 14px;
+
+    &:hover {
+      background-color: #f8fafc;
+    }
+
+    &.is-selected {
+      color: #409eff;
+      font-weight: 500;
+    }
+  }
+}

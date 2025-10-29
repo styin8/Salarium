@@ -9,6 +9,9 @@ import { createPinia } from 'pinia'
 import './assets/element-plus-overrides.css'
 // Shared styles for consistent UI
 import './styles/shared.css'
+// SCSS theme and overrides
+import './styles/theme.scss'
+import './styles/element-plus-overrides.scss'
 import { setupAxiosInterceptors } from './utils/axios'
 import { useUserStore } from './store/user'
 

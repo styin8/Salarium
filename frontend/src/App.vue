@@ -147,6 +147,10 @@ function closeMobileMenu() {
   </div>
 </template>
 
+<style lang="scss">
+@use './styles/responsive.scss';
+</style>
+
 <style scoped>
 .app-layout {
   display: flex;
