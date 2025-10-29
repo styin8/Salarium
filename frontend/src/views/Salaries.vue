@@ -3,7 +3,9 @@ import { ref, onMounted, watch, computed } from 'vue'
 import api from '../utils/axios'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { useSalaryStore } from '../store/salary'
+import { useSalaryActions } from '../composables/useSalaryActions'
+import { ElMessage } from 'element-plus'
 import { 
   Plus, 
   DollarSign, 
@@ -23,17 +25,14 @@ import {
 const route = useRoute()
 const router = useRouter()
 const user = useUserStore()
+const salaryStore = useSalaryStore()
+const { loading: actionLoading, createSalary, updateSalary, deleteSalary } = useSalaryActions()
+
 const personId = ref(Number(route.params.personId))
 const personName = ref('')
-const list = ref([])
-const filteredList = ref([])
 const dialogVisible = ref(false)
-const loading = ref(false)
 const isEditing = ref(false)
 const editingId = ref(null)
-
-const filterYear = ref(null)
-const filterMonth = ref(null)
 
 const form = ref({
   year: new Date().getFullYear(),
@@ -60,57 +59,34 @@ const form = ref({
 })
 
 
-const stats = computed(() => {
-  if (filteredList.value.length === 0) return { total: 0, average: 0, latest: 0 }
-  
-  const total = filteredList.value.reduce((sum, item) => sum + (item.net_income || 0), 0)
-  const average = total / filteredList.value.length
-  const latest = filteredList.value.length > 0 ? filteredList.value[filteredList.value.length - 1].net_income || 0 : 0
-  
-  return { total, average, latest }
+const list = computed(() => salaryStore.list)
+const filteredList = computed(() => salaryStore.filteredList)
+const stats = computed(() => salaryStore.stats)
+const yearOptions = computed(() => salaryStore.yearOptions)
+const loading = computed(() => salaryStore.loading)
+const refreshing = computed(() => salaryStore.refreshing)
+
+const filterYear = computed({
+  get: () => salaryStore.filters.year,
+  set: (value) => salaryStore.setYear(value)
 })
 
-const yearOptions = computed(() => {
-  const years = [...new Set(list.value.map(item => item.year))].sort((a, b) => b - a)
-  return years
+const filterMonth = computed({
+  get: () => salaryStore.filters.month,
+  set: (value) => salaryStore.setMonth(value)
 })
-
-const filterData = () => {
-  let filtered = [...list.value]
-  
-  if (filterYear.value) {
-    filtered = filtered.filter(item => item.year === filterYear.value)
-  }
-  
-  if (filterMonth.value) {
-    filtered = filtered.filter(item => item.month === filterMonth.value)
-  }
-  
-  filtered.sort((a, b) => {
-    if (a.year !== b.year) return b.year - a.year
-    return b.month - a.month
-  })
-  
-  filteredList.value = filtered
-}
-
-watch([filterYear, filterMonth], filterData)
-watch(list, filterData, { immediate: true })
 
 async function load() {
   if (!personId.value) return
-  loading.value = true
+  
   try {
-    const { data } = await api.get('/salaries/', { params: { person_id: personId.value } })
-    list.value = data
+    await salaryStore.fetchList(personId.value)
     
     const { data: persons } = await api.get('/persons/')
     const person = persons.find(p => p.id === personId.value)
     personName.value = person ? person.name : `人员 ${personId.value}`
   } catch (error) {
     ElMessage.error('加载工资记录失败')
-  } finally {
-    loading.value = false
   }
 }
 
@@ -153,6 +129,7 @@ function openEdit(salary) {
     performance_salary: salary.performance_salary,
     high_temp_allowance: salary.high_temp_allowance,
     low_temp_allowance: salary.low_temp_allowance,
+    computer_allowance: salary.computer_allowance,
     meal_allowance: salary.meal_allowance,
     mid_autumn_benefit: salary.mid_autumn_benefit,
     dragon_boat_benefit: salary.dragon_boat_benefit,
@@ -179,50 +156,21 @@ async function submit() {
   
   try {
     if (isEditing.value) {
-      const { data } = await api.put(`/salaries/${editingId.value}`, form.value)
-      const index = list.value.findIndex(item => item.id === editingId.value)
-      if (index !== -1) {
-        list.value[index] = data
-      }
-      ElMessage.success('工资记录更新成功')
-      window.dispatchEvent(new CustomEvent('stats:invalidate'))
+      await updateSalary(editingId.value, form.value, { closeDialog: false })
     } else {
-      const { data } = await api.post(`/salaries/${personId.value}`, form.value)
-      list.value.push(data)
-      ElMessage.success('工资记录添加成功')
-      window.dispatchEvent(new CustomEvent('stats:invalidate'))
+      await createSalary(personId.value, form.value, { closeDialog: false })
     }
     dialogVisible.value = false
   } catch (error) {
-    console.error('操作工资记录失败:', error)
-    if (error.response) {
-      ElMessage.error(`操作失败: ${error.response.data.detail || '服务器错误'}`)
-    } else {
-      ElMessage.error('操作工资记录失败，请检查网络连接')
-    }
+    // Error handling is done in useSalaryActions
   }
 }
 
 async function remove(id, yearMonth) {
   try {
-    await ElMessageBox.confirm(
-      `确定要删除 ${yearMonth} 的工资记录吗？`,
-      '确认删除',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
-    )
-    
-    await api.delete(`/salaries/${id}`)
-    list.value = list.value.filter(i => i.id !== id)
-    ElMessage.success('删除成功')
-    window.dispatchEvent(new CustomEvent('stats:invalidate'))
+    await deleteSalary(id, yearMonth)
   } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('删除失败')
-    }
+    // Error handling is done in useSalaryActions
   }
 }
 
@@ -238,8 +186,7 @@ function goBack() {
 }
 
 function clearFilters() {
-  filterYear.value = null
-  filterMonth.value = null
+  salaryStore.clearFilters()
 }
 
 watch(() => route.params.personId, (v) => { 
