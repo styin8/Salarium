@@ -264,7 +264,7 @@ onMounted(load)
           <User class="title-icon" />
           <div>
             <h1>{{ personName }} - 工资记录</h1>
-            <p class="header-subtitle">管理员工工资明细和历史记录</p>
+            <p class="header-subtitle">管理工资明细和历史记录</p>
           </div>
         </div>
       </div>
