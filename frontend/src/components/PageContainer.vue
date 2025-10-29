@@ -2,7 +2,7 @@
 defineProps({
   minHeight: {
     type: String,
-    default: 'calc(100vh - 180px)'
+    default: 'calc(80vh - 180px)'
   }
 })
 </script>

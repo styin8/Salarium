@@ -4,7 +4,7 @@ import { useStatsStore } from './stats'
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('token') || '',
-    username: '',
+    username: localStorage.getItem('username') || '',
   }),
   actions: {
     setToken(t) {
@@ -22,6 +22,7 @@ export const useUserStore = defineStore('user', {
       this.token = ''
       this.username = ''
       localStorage.removeItem('token')
+      localStorage.removeItem('username')
       // Thoroughly clear business caches
       try {
         const stats = useStatsStore()
@@ -32,6 +33,7 @@ export const useUserStore = defineStore('user', {
     },
     setUsername(name) {
       this.username = name
+      localStorage.setItem('username', name)
     },
   },
 })

@@ -64,7 +64,7 @@ function onTabClick(tab) {
           <el-form-item class="toolbar-field">
             <el-select
               v-model="personFilter"
-              placeholder="人员"
+              placeholder="请选择用户"
               class="filter-control"
               size="small"
               clearable
@@ -94,7 +94,7 @@ function onTabClick(tab) {
           <el-form-item class="toolbar-field">
             <el-select
               v-model="monthFilter"
-              placeholder="月份"
+              placeholder="月"
               class="filter-control"
               size="small"
               clearable
@@ -172,10 +172,43 @@ function onTabClick(tab) {
   text-align: left;
 }
 
+/* Toolbar refresh button styling */
 .toolbar-refresh {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  height: 32px !important;
+  min-height: 32px !important;
+  width: auto !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* Input number controls styling */
+.toolbar-filters :deep(.el-input-number__increase),
+.toolbar-filters :deep(.el-input-number__decrease) {
+  height: 16px !important;
+  line-height: 16px !important;
+  width: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Month selector width adjustment */
+.toolbar-filters :deep(.el-select) {
+  min-width: 80px !important;
+}
+
+.toolbar-filters :deep(.el-select__wrapper) {
+  min-width: 80px !important;
+}
+
+.toolbar-filters :deep(.el-input-number__increase) {
+  border-bottom: 1px solid var(--primary-color) !important;
+}
+
+.toolbar-filters :deep(.el-input-number__decrease) {
+  border-top: 1px solid var(--primary-color) !important;
 }
 
 .toolbar-refresh :deep(.el-icon) {
@@ -211,6 +244,53 @@ function onTabClick(tab) {
 .toolbar-filters :deep(.el-date-picker:focus .el-input__wrapper),
 .toolbar-filters :deep(.el-date-picker:focus-visible .el-input__wrapper) {
   box-shadow: none !important;
+}
+
+/* Button-like style for filter controls to match toolbar button */
+.toolbar-filters :deep(.el-select__wrapper),
+.toolbar-filters :deep(.el-input__wrapper),
+.toolbar-filters :deep(.el-date-editor .el-input__wrapper) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px;
+  height: 32px;
+  min-width: 80px;
+  border: 1px solid var(--primary-color) !important;
+  border-radius: 6px;
+  background-color: #fff;
+  color: var(--text-primary);
+  box-shadow: none !important;
+}
+
+.toolbar-filters :deep(.el-select__wrapper:hover),
+.toolbar-filters :deep(.el-input__wrapper:hover),
+.toolbar-filters :deep(.el-date-editor .el-input__wrapper:hover) {
+  border-color: var(--primary-hover) !important;
+  background-color: #f0f7ff;
+}
+
+.toolbar-filters :deep(.el-select__wrapper.is-focus),
+.toolbar-filters :deep(.el-input__wrapper.is-focus),
+.toolbar-filters :deep(.el-date-editor.is-focus .el-input__wrapper) {
+  border-color: var(--primary-color) !important;
+  box-shadow: none !important;
+}
+
+.toolbar-filters :deep(.el-select__suffix .el-select__icon),
+.toolbar-filters :deep(.el-select__suffix .el-select__caret) {
+  color: var(--primary-color);
+}
+
+.toolbar-filters :deep(.el-input__inner) {
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.toolbar-filters :deep(.el-select__selected-item .el-select__placeholder),
+.toolbar-filters :deep(.el-select__placeholder) {
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {

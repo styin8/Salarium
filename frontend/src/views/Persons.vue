@@ -179,8 +179,8 @@ onMounted(load)
     <el-card class="persons-list-card" shadow="hover" v-if="list.length > 0">
       <template #header>
         <div class="card-header">
-          <span class="card-title">人员列表</span>
-          <el-button @click="load" size="small" type="default">
+          <span class="card-title">用户信息</span>
+          <el-button @click="load" size="small" type="primary" plain class="refresh-button">
             刷新
           </el-button>
         </div>
@@ -350,16 +350,30 @@ onMounted(load)
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
+
+/* 移除卡片标题下方的分割线 */
+.persons-list-card :deep(.el-card__header) {
+  border-bottom: none;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0;
 }
 
 .card-title {
   font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
+}
+
+/* 统一刷新按钮样式 */
+.refresh-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .persons-grid {

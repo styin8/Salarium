@@ -5,7 +5,7 @@ import ChartCard from './ChartCard.vue'
 
 const props = defineProps({
   data: { type: Array, default: () => [] }, // expects GrossVsNetMonthly
-  title: { type: String, default: '瀑布图：应发 -> 扣除 -> 实际到手' },
+  title: { type: String, default: '应发 -> 扣除 -> 实际到手' },
   note: { type: String, default: '' },
 })
 
