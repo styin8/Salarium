@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from tortoise.contrib.fastapi import register_tortoise
 
 from .routes.auth import router as auth_router
@@ -55,6 +56,16 @@ def create_app() -> FastAPI:
 
     static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
     if os.path.exists(static_dir):
+        @app.get("/{full_path:path}")
+        def spa_fallback(full_path: str):
+            """Serve index.html for non-API routes to support SPA refresh in production."""
+            if full_path.startswith("api"):
+                raise HTTPException(status_code=404, detail="Not Found")
+            index_path = os.path.join(static_dir, "index.html")
+            if os.path.exists(index_path):
+                return FileResponse(index_path)
+            raise HTTPException(status_code=404, detail="Not Found")
+
         app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
     return app
