@@ -93,6 +93,7 @@ const annualWithTotal = computed(() => {
     total.low_temp_allowance += row.low_temp_allowance
     total.computer_allowance += row.computer_allowance
     total.communication_allowance += row.communication_allowance
+    total.comprehensive_allowance += row.comprehensive_allowance
     total.meal_allowance += row.meal_allowance
     total.mid_autumn_benefit += row.mid_autumn_benefit
     total.dragon_boat_benefit += row.dragon_boat_benefit
@@ -109,7 +110,7 @@ const annualWithTotal = computed(() => {
     total.income_total += row.income_total
     total.deductions_total += row.deductions_total
     total.benefits_total += row.benefits_total
-    total.allowances_total += (row.high_temp_allowance + row.low_temp_allowance + row.computer_allowance + row.communication_allowance + row.comprehensive_allowance + row.meal_allowance)
+    total.allowances_total += (row.other_income + row.meal_allowance)
     total.actual_take_home += row.actual_take_home
   })
   
@@ -338,6 +339,9 @@ watch(() => stats.refreshToken, () => { load() })
           <el-table-column prop="communication_allowance" label="通信补贴" width="140" min-width="120" sortable align="right">
             <template #default="{ row }">{{ formatCurrency(row.communication_allowance) }}</template>
           </el-table-column>
+          <el-table-column prop="comprehensive_allowance" label="综合补贴" width="140" min-width="120" sortable align="right">
+            <template #default="{ row }">{{ formatCurrency(row.comprehensive_allowance) }}</template>
+          </el-table-column>
           <el-table-column prop="meal_allowance" label="餐补" width="140" min-width="120" sortable align="right">
             <template #default="{ row }">{{ formatCurrency(row.meal_allowance) }}</template>
           </el-table-column>
@@ -378,6 +382,9 @@ watch(() => stats.refreshToken, () => { load() })
           </el-table-column>
           <el-table-column prop="labor_union_fee" label="工会" width="140" min-width="120" sortable align="right">
             <template #default="{ row }">{{ formatCurrency(row.labor_union_fee) }}</template>
+          </el-table-column>
+          <el-table-column prop="performance_deduction" label="绩效扣除" width="140" min-width="120" sortable align="right">
+            <template #default="{ row }">{{ formatCurrency(row.performance_deduction) }}</template>
           </el-table-column>
 
           <!-- Totals -->
