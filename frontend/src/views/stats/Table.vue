@@ -65,6 +65,7 @@ const annualWithTotal = computed(() => {
     computer_allowance: 0,
     communication_allowance: 0,
     meal_allowance: 0,
+    comprehensive_allowance: 0,
     mid_autumn_benefit: 0,
     dragon_boat_benefit: 0,
     spring_festival_benefit: 0,
@@ -77,6 +78,7 @@ const annualWithTotal = computed(() => {
     housing_fund: 0,
     other_deductions: 0,
     labor_union_fee: 0,
+    performance_deduction: 0,
     income_total: 0,
     deductions_total: 0,
     benefits_total: 0,
@@ -107,7 +109,7 @@ const annualWithTotal = computed(() => {
     total.income_total += row.income_total
     total.deductions_total += row.deductions_total
     total.benefits_total += row.benefits_total
-    total.allowances_total += (row.high_temp_allowance + row.low_temp_allowance + row.computer_allowance + row.communication_allowance + row.meal_allowance)
+    total.allowances_total += (row.high_temp_allowance + row.low_temp_allowance + row.computer_allowance + row.communication_allowance + row.comprehensive_allowance + row.meal_allowance)
     total.actual_take_home += row.actual_take_home
   })
   
@@ -141,9 +143,9 @@ function exportCSV() {
       
       const headers = [
         '姓名', '年份', '月份',
-        '基本工资', '绩效工资', '高温补贴', '低温补贴', '电脑补贴', '餐补',
+        '基本工资', '绩效工资', '高温补贴', '低温补贴', '电脑补贴', '通信补贴', '综合补贴', '餐补',
         '中秋福利', '端午福利', '春节福利', '其他收入',
-        '养老保险', '医疗保险', '失业保险', '大病互助', '企业年金', '住房公积金', '其他扣除',
+        '养老保险', '医疗保险', '失业保险', '大病互助', '企业年金', '住房公积金', '其他扣除', '工会', '绩效扣除',
         '收入合计', '扣除合计', '福利合计', '补贴合计', '实际到手'
       ]
       csvContent = headers.join(',') + '\n'
@@ -158,6 +160,8 @@ function exportCSV() {
           row.high_temp_allowance,
           row.low_temp_allowance,
           row.computer_allowance,
+          row.communication_allowance,
+          row.comprehensive_allowance,
           row.meal_allowance,
           row.mid_autumn_benefit,
           row.dragon_boat_benefit,
@@ -183,9 +187,9 @@ function exportCSV() {
       
       const headers = [
         '月份',
-        '基本工资', '绩效工资', '高温补贴', '低温补贴', '电脑补贴', '餐补',
+        '基本工资', '绩效工资', '高温补贴', '低温补贴', '电脑补贴', '通信补贴', '综合补贴', '餐补',
         '中秋福利', '端午福利', '春节福利', '其他收入',
-        '养老保险', '医疗保险', '失业保险', '大病互助', '企业年金', '住房公积金', '其他扣除',
+        '养老保险', '医疗保险', '失业保险', '大病互助', '企业年金', '住房公积金', '其他扣除', '工会', '绩效扣除',
         '收入合计', '扣除合计', '福利合计', '补贴合计', '实际到手'
       ]
       csvContent = headers.join(',') + '\n'
@@ -198,6 +202,8 @@ function exportCSV() {
           row.high_temp_allowance,
           row.low_temp_allowance,
           row.computer_allowance,
+          row.communication_allowance,
+          row.comprehensive_allowance,
           row.meal_allowance,
           row.mid_autumn_benefit,
           row.dragon_boat_benefit,
@@ -384,7 +390,7 @@ watch(() => stats.refreshToken, () => { load() })
           <el-table-column prop="benefits_total" label="福利合计" width="150" min-width="140" sortable align="right" class-name="highlight-col">
             <template #default="{ row }">{{ formatCurrency(row.benefits_total) }}</template>
           </el-table-column>
-          <el-table-column prop="allowances_total" label="补贴合计" width="150" min-width="140" sortable align="right" class-name="highlight-col">
+          <el-table-column prop="allowances_total" label="非现金补贴" width="150" min-width="140" sortable align="right" class-name="highlight-col">
             <template #default="{ row }">{{ formatCurrency(row.allowances_total) }}</template>
           </el-table-column>
           <el-table-column prop="actual_take_home" label="实际到手" width="150" min-width="140" sortable align="right" class-name="highlight-strong">
@@ -444,6 +450,9 @@ watch(() => stats.refreshToken, () => { load() })
           <el-table-column prop="communication_allowance" label="通信补贴" width="140" min-width="120" align="right">
             <template #default="{ row }">{{ formatCurrency(row.communication_allowance) }}</template>
           </el-table-column>
+          <el-table-column prop="comprehensive_allowance" label="综合补贴" width="140" min-width="120" align="right">
+            <template #default="{ row }">{{ formatCurrency(row.comprehensive_allowance) }}</template>
+          </el-table-column>
           <el-table-column prop="meal_allowance" label="餐补" width="140" min-width="120" align="right">
             <template #default="{ row }">{{ formatCurrency(row.meal_allowance) }}</template>
           </el-table-column>
@@ -485,6 +494,9 @@ watch(() => stats.refreshToken, () => { load() })
           <el-table-column prop="labor_union_fee" label="工会" width="140" min-width="120" align="right">
             <template #default="{ row }">{{ formatCurrency(row.labor_union_fee) }}</template>
           </el-table-column>
+          <el-table-column prop="performance_deduction" label="绩效扣除" width="140" min-width="120" align="right">
+            <template #default="{ row }">{{ formatCurrency(row.performance_deduction) }}</template>
+          </el-table-column>
 
           <!-- Totals -->
           <el-table-column prop="income_total" label="收入合计" width="150" min-width="140" align="right" class-name="highlight-col">
@@ -496,7 +508,7 @@ watch(() => stats.refreshToken, () => { load() })
           <el-table-column prop="benefits_total" label="福利合计" width="150" min-width="140" align="right" class-name="highlight-col">
             <template #default="{ row }">{{ formatCurrency(row.benefits_total) }}</template>
           </el-table-column>
-          <el-table-column prop="allowances_total" label="补贴合计" width="150" min-width="140" align="right" class-name="highlight-col">
+          <el-table-column prop="allowances_total" label="非现金补贴" width="150" min-width="140" align="right" class-name="highlight-col">
             <template #default="{ row }">{{ formatCurrency(row.allowances_total) }}</template>
           </el-table-column>
           <el-table-column prop="actual_take_home" label="实际到手" width="150" min-width="140" align="right" class-name="highlight-strong">

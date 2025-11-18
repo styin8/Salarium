@@ -14,6 +14,7 @@ def compute_payroll(
     dragon_boat_benefit,
     spring_festival_benefit,
     other_income,
+    comprehensive_allowance,
     pension_insurance,
     medical_insurance,
     unemployment_insurance,
@@ -22,6 +23,7 @@ def compute_payroll(
     housing_fund,
     other_deductions,
     labor_union_fee,
+    performance_deduction,
     tax,
 ):
     D = lambda v: v if isinstance(v, Decimal) else Decimal(str(v or 0))
@@ -38,6 +40,7 @@ def compute_payroll(
     dragon_boat_benefit = D(dragon_boat_benefit)
     spring_festival_benefit = D(spring_festival_benefit)
     other_income = D(other_income)
+    comprehensive_allowance = D(comprehensive_allowance)
 
     pension_insurance = D(pension_insurance)
     medical_insurance = D(medical_insurance)
@@ -47,6 +50,7 @@ def compute_payroll(
     housing_fund = D(housing_fund)
     other_deductions = D(other_deductions)
     labor_union_fee = D(labor_union_fee)
+    performance_deduction = D(performance_deduction)
     tax = D(tax)
 
     # Non-cash benefits (not included in actual take-home)
@@ -65,6 +69,7 @@ def compute_payroll(
         + low_temp_allowance
         + computer_allowance
         + communication_allowance
+        + comprehensive_allowance
         + meal_allowance
         + mid_autumn_benefit
         + dragon_boat_benefit
@@ -81,6 +86,7 @@ def compute_payroll(
         + housing_fund
         + other_deductions
         + labor_union_fee
+        + performance_deduction
     ).quantize(q, rounding=ROUND_HALF_UP)
 
     gross_income = total_income
@@ -95,6 +101,7 @@ def compute_payroll(
         + low_temp_allowance
         + computer_allowance
         + communication_allowance
+        + comprehensive_allowance
         + other_income
         - total_deductions
     ).quantize(q, rounding=ROUND_HALF_UP)

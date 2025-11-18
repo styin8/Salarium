@@ -23,6 +23,7 @@ def to_out(rec: SalaryRecord) -> SalaryOut:
         dragon_boat_benefit=rec.dragon_boat_benefit,
         spring_festival_benefit=rec.spring_festival_benefit,
         other_income=rec.other_income,
+        comprehensive_allowance=rec.comprehensive_allowance,
         pension_insurance=rec.pension_insurance,
         medical_insurance=rec.medical_insurance,
         unemployment_insurance=rec.unemployment_insurance,
@@ -31,6 +32,7 @@ def to_out(rec: SalaryRecord) -> SalaryOut:
         housing_fund=rec.housing_fund,
         other_deductions=rec.other_deductions,
         labor_union_fee=rec.labor_union_fee,
+        performance_deduction=rec.performance_deduction,
         tax=rec.tax,
     )
     return SalaryOut(
@@ -48,6 +50,7 @@ def to_out(rec: SalaryRecord) -> SalaryOut:
         dragon_boat_benefit=rec.dragon_boat_benefit,
         spring_festival_benefit=rec.spring_festival_benefit,
         other_income=rec.other_income,
+        comprehensive_allowance=rec.comprehensive_allowance,
         pension_insurance=rec.pension_insurance,
         medical_insurance=rec.medical_insurance,
         unemployment_insurance=rec.unemployment_insurance,
@@ -56,6 +59,7 @@ def to_out(rec: SalaryRecord) -> SalaryOut:
         housing_fund=rec.housing_fund,
         other_deductions=rec.other_deductions,
         labor_union_fee=rec.labor_union_fee,
+        performance_deduction=rec.performance_deduction,
         tax=data["tax"],
         total_income=data["total_income"],
         total_deductions=data["total_deductions"],
@@ -102,6 +106,7 @@ async def create_salary(person_id: int, payload: SalaryCreate, user=Depends(get_
         dragon_boat_benefit=payload.dragon_boat_benefit,
         spring_festival_benefit=payload.spring_festival_benefit,
         other_income=payload.other_income,
+        comprehensive_allowance=payload.comprehensive_allowance,
         pension_insurance=payload.pension_insurance,
         medical_insurance=payload.medical_insurance,
         unemployment_insurance=payload.unemployment_insurance,
@@ -110,6 +115,7 @@ async def create_salary(person_id: int, payload: SalaryCreate, user=Depends(get_
         housing_fund=payload.housing_fund,
         other_deductions=payload.other_deductions,
         labor_union_fee=payload.labor_union_fee,
+        performance_deduction=payload.performance_deduction,
         tax=payload.tax,
     )
     rec = await SalaryRecord.create(
@@ -127,6 +133,7 @@ async def create_salary(person_id: int, payload: SalaryCreate, user=Depends(get_
         dragon_boat_benefit=payload.dragon_boat_benefit,
         spring_festival_benefit=payload.spring_festival_benefit,
         other_income=payload.other_income,
+        comprehensive_allowance=payload.comprehensive_allowance,
         pension_insurance=payload.pension_insurance,
         medical_insurance=payload.medical_insurance,
         unemployment_insurance=payload.unemployment_insurance,
@@ -135,6 +142,7 @@ async def create_salary(person_id: int, payload: SalaryCreate, user=Depends(get_
         housing_fund=payload.housing_fund,
         other_deductions=payload.other_deductions,
         labor_union_fee=payload.labor_union_fee,
+        performance_deduction=payload.performance_deduction,
         tax=calc["tax"],
         note=payload.note,
     )
@@ -169,6 +177,7 @@ async def update_salary(record_id: int, payload: SalaryUpdate, user=Depends(get_
         dragon_boat_benefit=rec.dragon_boat_benefit,
         spring_festival_benefit=rec.spring_festival_benefit,
         other_income=rec.other_income,
+        comprehensive_allowance=rec.comprehensive_allowance,
         pension_insurance=rec.pension_insurance,
         medical_insurance=rec.medical_insurance,
         unemployment_insurance=rec.unemployment_insurance,
@@ -177,6 +186,7 @@ async def update_salary(record_id: int, payload: SalaryUpdate, user=Depends(get_
         housing_fund=rec.housing_fund,
         other_deductions=rec.other_deductions,
         labor_union_fee=rec.labor_union_fee,
+        performance_deduction=rec.performance_deduction,
         tax=rec.tax,
     )
     rec.tax = calc["tax"]

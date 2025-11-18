@@ -23,7 +23,7 @@ function byMonth() {
     const v = map.get(key)
     v.base += r.base_salary || 0
     v.perf += r.performance_salary || 0
-    v.allow += (r.high_temp_allowance || 0) + (r.low_temp_allowance || 0) + (r.meal_allowance || 0) + (r.computer_allowance || 0) + (r.communication_allowance || 0)
+    v.allow += (r.high_temp_allowance || 0) + (r.low_temp_allowance || 0) + (r.meal_allowance || 0) + (r.computer_allowance || 0) + (r.communication_allowance || 0) + (r.comprehensive_allowance || 0)
     v.benefits += r.non_cash_benefits || 0
     v.other += r.other_income || 0
   }

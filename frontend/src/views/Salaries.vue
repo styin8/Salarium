@@ -127,6 +127,7 @@ function openCreate() {
     computer_allowance: 0,
     communication_allowance: 0,
     meal_allowance: 0,
+    comprehensive_allowance: 0,
     mid_autumn_benefit: 0,
     dragon_boat_benefit: 0,
     spring_festival_benefit: 0,
@@ -139,6 +140,7 @@ function openCreate() {
     housing_fund: 0,
     other_deductions: 0,
     labor_union_fee: 0,
+    performance_deduction: 0,
     tax: 0,
     note: '',
   }
@@ -158,6 +160,7 @@ function openEdit(salary) {
     computer_allowance: salary.computer_allowance,
     communication_allowance: salary.communication_allowance,
     meal_allowance: salary.meal_allowance,
+    comprehensive_allowance: salary.comprehensive_allowance,
     mid_autumn_benefit: salary.mid_autumn_benefit,
     dragon_boat_benefit: salary.dragon_boat_benefit,
     spring_festival_benefit: salary.spring_festival_benefit,
@@ -170,6 +173,7 @@ function openEdit(salary) {
     housing_fund: salary.housing_fund,
     other_deductions: salary.other_deductions,
     labor_union_fee: salary.labor_union_fee,
+    performance_deduction: salary.performance_deduction,
     tax: salary.tax,
     note: salary.note || '',
   }
@@ -182,6 +186,21 @@ async function submit() {
     return
   }
   
+  const numericKeys = [
+    'base_salary','performance_salary','high_temp_allowance','low_temp_allowance','computer_allowance','communication_allowance','meal_allowance',
+    'mid_autumn_benefit','dragon_boat_benefit','spring_festival_benefit','other_income','comprehensive_allowance',
+    'pension_insurance','medical_insurance','unemployment_insurance','critical_illness_insurance','enterprise_annuity','housing_fund','other_deductions','labor_union_fee','performance_deduction','tax'
+  ]
+  // Normalize year/month as integers
+  const y = Number(form.value.year)
+  const m = Number(form.value.month)
+  form.value.year = Number.isFinite(y) ? Math.trunc(y) : new Date().getFullYear()
+  form.value.month = Number.isFinite(m) ? Math.min(12, Math.max(1, Math.trunc(m))) : (new Date().getMonth() + 1)
+  for (const k of numericKeys) {
+    const v = form.value[k]
+    form.value[k] = typeof v === 'number' && isFinite(v) ? v : 0
+  }
+
   try {
     if (isEditing.value) {
       const { data } = await api.put(`/salaries/${editingId.value}`, form.value)
@@ -378,7 +397,7 @@ onMounted(load)
         <th class="col-date" scope="col">时间</th>
         <th class="col-currency" scope="col">基本工资</th>
         <th class="col-currency" scope="col">绩效工资</th>
-        <th class="col-currency" scope="col">福利补贴</th>
+                <th class="col-currency" scope="col">福利补贴</th>
         <th class="col-currency" scope="col">通信补贴</th>
         <th class="col-currency" scope="col">总收入</th>
         <th class="col-currency" scope="col">五险一金</th>
@@ -404,6 +423,8 @@ onMounted(load)
                   salary.high_temp_allowance + 
                   salary.low_temp_allowance + 
                   salary.computer_allowance +
+                  salary.communication_allowance +
+                  salary.comprehensive_allowance +
                   salary.meal_allowance + 
                   salary.mid_autumn_benefit + 
                   salary.dragon_boat_benefit + 
@@ -514,6 +535,10 @@ onMounted(load)
             <label class="form-label">通信补贴</label>
             <input v-model.number="form.communication_allowance" type="number" class="form-control" step="0.01" min="0" />
           </div>
+          <div class="form-group">
+            <label class="form-label">综合补贴</label>
+            <input v-model.number="form.comprehensive_allowance" type="number" class="form-control" step="0.01" min="0" />
+          </div>
         </div>
           <div class="form-row">
             <div class="form-group">
@@ -580,6 +605,10 @@ onMounted(load)
           <div class="form-group">
             <label class="form-label">工会</label>
             <input v-model.number="form.labor_union_fee" type="number" class="form-control" step="0.01" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">绩效扣除</label>
+            <input v-model.number="form.performance_deduction" type="number" class="form-control" step="0.01" min="0" />
           </div>
         </div>
         </div>

@@ -42,6 +42,8 @@ function renderStack() {
       { name: '企业年金', type: 'line', stack: 'ded', areaStyle: {}, data: props.monthly.map(m => m.enterprise_annuity) },
       { name: '住房公积金', type: 'line', stack: 'ded', areaStyle: {}, data: props.monthly.map(m => m.housing_fund) },
       { name: '其他扣除', type: 'line', stack: 'ded', areaStyle: {}, data: props.monthly.map(m => m.other_deductions) },
+      { name: '工会', type: 'line', stack: 'ded', areaStyle: {}, data: props.monthly.map(m => m.labor_union_fee) },
+      { name: '绩效扣除', type: 'line', stack: 'ded', areaStyle: {}, data: props.monthly.map(m => m.performance_deduction) },
     ],
   })
 }

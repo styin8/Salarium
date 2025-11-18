@@ -20,6 +20,7 @@ class SalaryRecord(Model):
     dragon_boat_benefit = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
     spring_festival_benefit = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
     other_income = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
+    comprehensive_allowance = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     # Fixed deduction fields
     pension_insurance = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
@@ -30,6 +31,7 @@ class SalaryRecord(Model):
     housing_fund = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
     other_deductions = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
     labor_union_fee = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
+    performance_deduction = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     tax = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
 

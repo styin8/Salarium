@@ -79,6 +79,7 @@ class IncomeComposition(BaseModel):
     low_temp_allowance: float
     computer_allowance: float
     communication_allowance: float
+    comprehensive_allowance: float
     meal_allowance: float
     other_income: float
     non_cash_benefits: float
@@ -120,6 +121,7 @@ class DeductionsMonthly(BaseModel):
     housing_fund: float
     other_deductions: float
     labor_union_fee: float
+    performance_deduction: float
     total: float
 
 
@@ -163,6 +165,7 @@ class MonthlyTableRow(BaseModel):
     low_temp_allowance: float
     computer_allowance: float
     communication_allowance: float
+    comprehensive_allowance: float
     meal_allowance: float
     mid_autumn_benefit: float
     dragon_boat_benefit: float
@@ -177,6 +180,7 @@ class MonthlyTableRow(BaseModel):
     housing_fund: float
     other_deductions: float
     labor_union_fee: float
+    performance_deduction: float
     # Totals
     income_total: float
     deductions_total: float
@@ -199,6 +203,7 @@ class AnnualTableRow(BaseModel):
     low_temp_allowance_total: float
     computer_allowance_total: float
     communication_allowance_total: float
+    comprehensive_allowance_total: float
     meal_allowance_total: float
     mid_autumn_benefit_total: float
     dragon_boat_benefit_total: float
@@ -213,6 +218,7 @@ class AnnualTableRow(BaseModel):
     housing_fund_total: float
     other_deductions_total: float
     labor_union_fee_total: float
+    performance_deduction_total: float
     # Grand totals
     income_total: float
     deductions_total: float
@@ -231,6 +237,7 @@ class AnnualMonthlyRow(BaseModel):
     low_temp_allowance: float
     computer_allowance: float
     communication_allowance: float
+    comprehensive_allowance: float
     meal_allowance: float
     mid_autumn_benefit: float
     dragon_boat_benefit: float
@@ -245,6 +252,7 @@ class AnnualMonthlyRow(BaseModel):
     housing_fund: float
     other_deductions: float
     labor_union_fee: float
+    performance_deduction: float
     # Totals
     income_total: float
     deductions_total: float

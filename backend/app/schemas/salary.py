@@ -16,6 +16,7 @@ class SalaryCreate(BaseModel):
     dragon_boat_benefit: float = 0.0
     spring_festival_benefit: float = 0.0
     other_income: float = 0.0
+    comprehensive_allowance: float = 0.0
     pension_insurance: float = 0.0
     medical_insurance: float = 0.0
     unemployment_insurance: float = 0.0
@@ -24,6 +25,7 @@ class SalaryCreate(BaseModel):
     housing_fund: float = 0.0
     other_deductions: float = 0.0
     labor_union_fee: float = 0.0
+    performance_deduction: float = 0.0
     tax: float = 0.0
     note: Optional[str] = None
 
@@ -40,6 +42,7 @@ class SalaryUpdate(BaseModel):
     dragon_boat_benefit: Optional[float] = None
     spring_festival_benefit: Optional[float] = None
     other_income: Optional[float] = None
+    comprehensive_allowance: Optional[float] = None
     pension_insurance: Optional[float] = None
     medical_insurance: Optional[float] = None
     unemployment_insurance: Optional[float] = None
@@ -48,6 +51,7 @@ class SalaryUpdate(BaseModel):
     housing_fund: Optional[float] = None
     other_deductions: Optional[float] = None
     labor_union_fee: Optional[float] = None
+    performance_deduction: Optional[float] = None
     tax: Optional[float] = None
     note: Optional[str] = None
 
@@ -67,6 +71,7 @@ class SalaryOut(BaseModel):
     dragon_boat_benefit: float
     spring_festival_benefit: float
     other_income: float
+    comprehensive_allowance: float
     pension_insurance: float
     medical_insurance: float
     unemployment_insurance: float
@@ -75,6 +80,7 @@ class SalaryOut(BaseModel):
     housing_fund: float
     other_deductions: float
     labor_union_fee: float
+    performance_deduction: float
     tax: float
     total_income: float
     total_deductions: float
